@@ -27,7 +27,7 @@ public class Main {
         NNSettings nn1 = new NNSettings();
         nn1.setWeigths(new int[]{100, 6});
         nn1.setFunctions(new int[]{MLP.SIGMOID, MLP.LINEAR});
-        nn1.setTypeNetwork(NNSettings.GREEDY);
+        nn1.setTypeNetwork(NNSettings.HIERARCHICAL);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(0.3);
         nn1.setLOADWEIGHTS(false);
@@ -222,6 +222,8 @@ public class Main {
                 nn = new RandomWalk(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.GREEDY)
                 nn = new Greedy(world, idx, setting, gSet);
+            if (setting.getTypeNetwork() == setting.HIERARCHICAL)
+                nn = new HierarchicalAI(world, idx, setting, gSet);
             nn.setDiscount(setting.getDiscount());
             nn.setLearningRate(setting.getLearningRate());
             nn.setExplorationChance(setting.getExplorationRate());

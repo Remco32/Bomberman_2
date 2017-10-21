@@ -38,6 +38,7 @@ public class NNSettings {
     public static final int TDERROR = 7;
     public static final int RANDOM_WALK = 8;
     public static final int GREEDY = 9;
+    public static final int HIERARCHICAL = 10;
 
     public int[] getWeigths() {
         return weigths;
