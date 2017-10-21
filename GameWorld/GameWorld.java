@@ -13,7 +13,7 @@ import java.util.Random;
 public class GameWorld {
     protected int HARDWALL = 0;
     protected int SOFTWALL = 1;
-    protected int gridSize; // in 1 dimension
+    public int gridSize; // in 1 dimension
     protected int amountPlayers;
     protected int amountOfRounds = 0;
     protected Boolean windowBool;

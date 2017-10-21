@@ -56,4 +56,5 @@ public class WorldPosition {
         this.type = type;
     }
 
+
 }
