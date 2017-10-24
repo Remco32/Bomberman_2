@@ -164,13 +164,6 @@ public class AIHandler implements Serializable {
     }
 
 
-    public void load() {
-        //TODO
-    }
-
-    public void store() {
-        //TODO
-    }
 
     public String toString(){
         return "aiHandler";

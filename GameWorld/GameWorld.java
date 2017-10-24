@@ -59,7 +59,6 @@ public class GameWorld {
             }
 
         }
-        //TODO randomize the grid
 
         // init the players
         // 4 is max amount of players
@@ -162,8 +161,8 @@ public class GameWorld {
             while (i.hasNext()) {
                 AIHandler temp = i.next();
                 // SHOULD WE INCORPORATE THE TIME ELEMENT?
-                //TODO  temp.getMan().getPoints().add(Bomb.DIECOST);
-                //TODO temp.UpdateWeights();
+                //  temp.getMan().getPoints().add(Bomb.DIECOST);
+                // temp.UpdateWeights();
                 temp.EndOfRound(-1);
             }
         } else {*/
