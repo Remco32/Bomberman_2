@@ -229,7 +229,7 @@ public class Main {
             nn.setExplorationChance(setting.getExplorationRate());
             nn.setGenerationSize(gSet.getAmountOfGenerations());
             nn.setEpochSize(gSet.getAmountOfEpochs());
-            System.out.println("created:" + nn);
+            System.out.println("Created neural net for player " + idx);
             if (setting.isLOADWEIGHTS()) {
             nn.getActivationVectorlist().setWeigths(new Load().Load());
             nn.setLearningRate(0);

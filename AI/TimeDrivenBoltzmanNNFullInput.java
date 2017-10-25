@@ -18,15 +18,15 @@ import java.util.*;
  */
 public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
 
-    private ActivationVectorList activationList;
-    private int inputSize = 6; // all basic features
+    public ActivationVectorList activationList;
+    public int inputSize = 6; // all basic features
 
-    private int TIME=200;
-    private int localTime;
+    public int TIME=200;
+    public int localTime;
 
-    static private int viewingRange = 2;
-    private int amountOfInputs = 4;
-    private String tostring = "";
+    static public int viewingRange = 2;
+    public int amountOfInputs = 4;
+    public String tostring = "";
     BufferedWriter writer = null;
 
     public TimeDrivenBoltzmanNNFullInput(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
@@ -129,7 +129,7 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
     }
 
 
-    private ActivationVectorList CalculateBestMove() {
+    public ActivationVectorList CalculateBestMove() {
         activationList = mlp.forwardPass(CompleteGame(), activationList);
         return activationList;
     }

@@ -120,10 +120,12 @@ public class AIHandler implements Serializable {
             for (double temp : man.getPoints()) tempPoints += temp;
             epochPoints.add(tempPoints);
         }
-            double tempError = 0;
-            for (double temp : error) tempError += temp;
-            epochError.add(tempError /(double) error.size());
-            error = new ArrayList<>();
+        double tempError = 0;
+        for (double temp : error) tempError += temp;
+        epochError.add(tempError / (double) error.size());
+        error = new ArrayList<>();
+
+
     }
 
     public ArrayList<Double> getGenerationError() {
