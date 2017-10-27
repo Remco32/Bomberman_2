@@ -5,12 +5,7 @@ import MLP.MLP;
 import util.GameSettings;
 import util.NNSettings;
 
-import java.io.BufferedWriter;
 import java.util.*;
-
-import static org.apache.commons.math3.util.FastMath.abs;
-import static org.apache.commons.math3.util.FastMath.max;
-import static org.apache.commons.math3.util.FastMath.pow;
 
 import GameWorld.*;
 import MLP.AbstractActivationFunction;
@@ -25,6 +20,9 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.apache.commons.math3.util.FastMath.abs;
+
+
 /**
  * Created by Remco on 21-10-2017.
  */
@@ -32,7 +30,10 @@ import java.util.*;
 public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     private boolean DEBUG = true;
     WorldPosition targetPosition;
+    //protected MLP mlp2;
+    TimeDrivenBoltzmanNNFullInput secondNetwork;
 
+    public ActivationVectorList activationList;
 
 
 
@@ -42,22 +43,17 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         super(world, manIndex, setting, gSet);
         this.world = world;
 
+        //mlp2 = new MLP(learningRate);
+        secondNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
-/**
-        mlp = new MLP(learningRate);
 
-        this.setDiscount(setting.getDiscount());
-        this.setLearningRate(setting.getLearningRate());
-        this.setExplorationChance(setting.getExplorationRate());
-        this.setGenerationSize(gSet.getAmountOfGenerations());
-        this.setEpochSize(gSet.getAmountOfEpochs());
-**/
         if (DEBUG) System.out.println("Using hierachical");
     }
 
     public void AddMoveToBuffer() {
         int targetEnemy = checkPathToEnemies();
-        if(targetEnemy == -2) {
+        if(targetEnemy == -2) { // First strategy: Pathfinding
+            if (DEBUG) System.out.println("First strategy: Pathfinding");
             double[] output = CalculateBestMove().getOutput();
             int move = 0;
             double maxOutcome = Double.NEGATIVE_INFINITY;
@@ -73,28 +69,31 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
                 if (PRINT) System.out.println("random!");
             }
             moves.add(move);// add the move to the move list
-        }else {
-            if (DEBUG) System.out.println("Enemy accessible, we should switch strategies.");
+        }else { // Second strategy: Attacking
+            //TODO Put second NN here
+            //if (DEBUG) System.out.println("Enemy accessible, we should switch strategies.");
+            if (DEBUG) System.out.println("Second strategy: Attacking");
+
+            double[] output = secondNetwork.CalculateBestMove().getOutput();
+            int move = 0;
+            double maxOutcome = Double.NEGATIVE_INFINITY;
+            for (int idx = 0; idx < output.length; idx++) {
+                if (maxOutcome < output[idx]) {
+                    move = idx;
+                    maxOutcome = output[idx];
+                }
+            }
+            double random = rnd.nextDouble();
+            if (!secondNetwork.testing && random < secondNetwork.explorationChance) {
+                move = secondNetwork.TimeBoltzMan(output);
+                if (PRINT) System.out.println("random!");
+            }
+            moves.add(move);// add the move to the move list
         }
 
     }
 
-    /**
 
-    public void AddMoveToBuffer() {
-
-        ArrayList<AIHandler> listOfEnemies = world.getAi();
-        for (int x = 1; x < listOfEnemies.size(); x++) { //offset by one so our own AI is ignored
-            //get the X and Y of the enemy
-            WorldPosition enemyLocation = world.getPositions(listOfEnemies.get(x).getMan().getX_location(), listOfEnemies.get(x).getMan().getY_location());
-
-            //search for paths using aStar
-            aStar(enemyLocation);
-        }
-
-        if (man.getAlive()) moves.add(0); //do nothing
-    }
-     **/
 
     int checkPathToEnemies(){ //returns ID of enemy to which a path is possible. TODO: Does not return multiple values when more enemies are accessible
 
@@ -109,7 +108,25 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         return -2; //no paths
     }
 
-    //TODO doesn't work completely like it should
+    /**
+
+     public void AddMoveToBuffer() {
+
+     ArrayList<AIHandler> listOfEnemies = world.getAi();
+     for (int x = 1; x < listOfEnemies.size(); x++) { //offset by one so our own AI is ignored
+     //get the X and Y of the enemy
+     WorldPosition enemyLocation = world.getPositions(listOfEnemies.get(x).getMan().getX_location(), listOfEnemies.get(x).getMan().getY_location());
+
+     //search for paths using aStar
+     aStar(enemyLocation);
+     }
+
+     if (man.getAlive()) moves.add(0); //do nothing
+     }
+     **/
+
+    //TODO doesn't work completely like it should.
+    //One issue is that enemies move during the pathfinding. This means a path can be found to an old location with no enemy on it anymore.
     int aStar(WorldPosition targetPosition) { //returns ID of enemy to which a path is found
         this.targetPosition = targetPosition;
         int targetID;
@@ -131,8 +148,9 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
         //loop until we found our targetPosition, our until we run out of positions in the openlist
         while (!openList.isEmpty()) {
-            if(targetPosition.getX_location() == positionConsidering.getX_location() && targetPosition.getY_location() == positionConsidering.getY_location()){
-                if (DEBUG) System.out.println("Path from " +man.getX_location()+ "," + man.getY_location() +" to " + targetPosition.getX_location() + "," + targetPosition.getY_location() + " (enemy "+ targetID + ")") ;
+            if (targetPosition.getX_location() == positionConsidering.getX_location() && targetPosition.getY_location() == positionConsidering.getY_location()) {
+                if (DEBUG)
+                    System.out.println("Path from " + man.getX_location() + "," + man.getY_location() + " to " + targetPosition.getX_location() + "," + targetPosition.getY_location() + " (enemy " + targetID + ")");
                 return targetID;
             }
 
@@ -180,7 +198,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
         }
 
-       // if (DEBUG) System.out.println("Processed all positions.");
+        // if (DEBUG) System.out.println("Processed all positions.");
         return -2;
 
     }
@@ -252,4 +270,10 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     }
 
+/**
+    public ActivationVectorList CalculateBestMove(MLP mlp) {
+        activationList = mlp.forwardPass(CompleteGame(), activationList);
+        return activationList;
+    }
+**/
 }

@@ -74,8 +74,8 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
 
     public double[] CompleteGame() {
         int worldSize = world.getGridSize();
-        int x = man.getX_location();
-        int y = man.getY_location();
+        //int x = man.getX_location();
+        //int y = man.getY_location();
 
         ArrayList<Double> gridList = new ArrayList<>();
         for (int xIdx = 0; xIdx < worldSize; xIdx++) {

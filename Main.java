@@ -217,13 +217,30 @@ public class Main {
             if (setting.getTypeNetwork() == setting.NEURAL_NETWORK_GREEDY_DIMINISHING_OVER_TIME)
                 nn = new diminishingEGreedy(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.TDERROR)
-                nn = new TDError(world, idx, setting.getWeigths(), setting.getFunctions(),setting);
+                nn = new TDError(world, idx, setting.getWeigths(), setting.getFunctions(), setting);
             if (setting.getTypeNetwork() == setting.RANDOM_WALK)
                 nn = new RandomWalk(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.GREEDY)
                 nn = new Greedy(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.HIERARCHICAL)
                 nn = new HierarchicalAI(world, idx, setting, gSet);
+                /**
+                AIHandler nn2 = new AIHandler(world, idx);
+                nn2 = new HierarchicalAI(world, idx, setting, gSet);
+                nn2.setDiscount(setting.getDiscount());
+                nn2.setLearningRate(setting.getLearningRate());
+                nn2.setExplorationChance(setting.getExplorationRate());
+                nn2.setGenerationSize(gSet.getAmountOfGenerations());
+                nn2.setEpochSize(gSet.getAmountOfEpochs());
+                System.out.println("Created 2nd neural net for player " + idx);
+                if (setting.isLOADWEIGHTS()) {
+                    nn2.getActivationVectorlist().setWeigths(new Load().Load());
+                    nn2.setLearningRate(0);
+                }
+                 **/
+
+
+
             nn.setDiscount(setting.getDiscount());
             nn.setLearningRate(setting.getLearningRate());
             nn.setExplorationChance(setting.getExplorationRate());
