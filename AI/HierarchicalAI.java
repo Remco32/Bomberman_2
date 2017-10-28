@@ -1,24 +1,12 @@
 package AI;
 
 import GameWorld.*;
-import MLP.MLP;
 import util.GameSettings;
 import util.NNSettings;
 
 import java.util.*;
 
-import GameWorld.*;
-import MLP.AbstractActivationFunction;
 import MLP.ActivationVectorList;
-import MLP.MLP;
-import util.GameSettings;
-import util.NNSettings;
-
-import java.io.*;
-import java.lang.reflect.Array;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 
@@ -52,8 +40,12 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     public void AddMoveToBuffer() {
         int targetEnemy = checkPathToEnemies();
-        if(targetEnemy == -2) { // First strategy: Pathfinding
+        if (targetEnemy == -2) { // First strategy: Pathfinding
             if (DEBUG) System.out.println("First strategy: Pathfinding");
+
+            //change rewards to rewards for this strat
+            changeStrategyRewards(1);
+
             double[] output = CalculateBestMove().getOutput();
             int move = 0;
             double maxOutcome = Double.NEGATIVE_INFINITY;
@@ -69,10 +61,11 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
                 if (PRINT) System.out.println("random!");
             }
             moves.add(move);// add the move to the move list
-        }else { // Second strategy: Attacking
-            //TODO Put second NN here
-            //if (DEBUG) System.out.println("Enemy accessible, we should switch strategies.");
+        } else { // Second strategy: Attacking
             if (DEBUG) System.out.println("Second strategy: Attacking");
+
+            //change rewards to rewards for this strat
+            changeStrategyRewards(2);
 
             double[] output = secondNetwork.CalculateBestMove().getOutput();
             int move = 0;
@@ -91,6 +84,25 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
             moves.add(move);// add the move to the move list
         }
 
+    }
+
+    //TODO doesn't change the values for already active bombs
+    //TODO also affects other AI using reinforcement learning
+    //Changes the rewards to the other set
+    void changeStrategyRewards(int strategyNumber){
+        if(strategyNumber == 1) { //Pathfinding
+            //Bomb.setDIECOST(-300); redundant
+            Bomb.setKillReward(0);
+            Bomb.setWallReward(30);
+            //BomberMan.setMOVECOST(-1); redundant
+        }
+
+        if(strategyNumber == 2) { //Attacking
+            //Bomb.setDIECOST(-300); redundant
+            Bomb.setKillReward(100);
+            Bomb.setWallReward(0);
+            //BomberMan.setMOVECOST(-1); redundant
+        }
     }
 
 
