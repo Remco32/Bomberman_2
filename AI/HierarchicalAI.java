@@ -19,7 +19,9 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     private boolean DEBUG = true;
     WorldPosition targetPosition;
     //protected MLP mlp2;
-    TimeDrivenBoltzmanNNFullInput secondNetwork;
+    TimeDrivenBoltzmanNNFullInput oneEnemyNetwork;
+    TimeDrivenBoltzmanNNFullInput twoEnemiesNetwork;
+    TimeDrivenBoltzmanNNFullInput threeEnemiesNetwork;
 
     public ActivationVectorList activationList;
 
@@ -31,59 +33,86 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         super(world, manIndex, setting, gSet);
         this.world = world;
 
-        //mlp2 = new MLP(learningRate);
-        secondNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+        oneEnemyNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+
+        if(world.getAmountPlayers() >= 3){
+            twoEnemiesNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+
+        }
+
+        if(world.getAmountPlayers() >= 4){
+            threeEnemiesNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+        }
 
 
         if (DEBUG) System.out.println("Using hierachical");
     }
 
     public void AddMoveToBuffer() {
-        int targetEnemy = checkPathToEnemies();
-        if (targetEnemy == -2) { // First strategy: Pathfinding
+        List targetEnemies = checkPathToEnemies();
+        int move = 0;
+        int enemyCount = 0;
+
+
+        //go through the list to count how many enemies we have a path to
+
+        for(int i = 0; i < targetEnemies.size(); i++){
+            int enemy = (int)targetEnemies.get(i);
+
+            if (enemy == 1 || enemy == 2 || enemy == 3) {
+                enemyCount++;
+            }
+        }
+
+
+        if (enemyCount > 0) { // Second strategy: Attacking
+            if (DEBUG) System.out.println("Second strategy: Attacking. Amount of targets: " + enemyCount);
+            //change rewards to rewards for this strat
+            changeStrategyRewards(2);
+            move = calculateMove(enemyCount);
+
+        } else {
             if (DEBUG) System.out.println("First strategy: Pathfinding");
 
             //change rewards to rewards for this strat
             changeStrategyRewards(1);
+            move = calculateMove(0);
 
-            double[] output = CalculateBestMove().getOutput();
-            int move = 0;
-            double maxOutcome = Double.NEGATIVE_INFINITY;
-            for (int idx = 0; idx < output.length; idx++) {
-                if (maxOutcome < output[idx]) {
-                    move = idx;
-                    maxOutcome = output[idx];
-                }
-            }
-            double random = rnd.nextDouble();
-            if (!testing && random < explorationChance) {
-                move = TimeBoltzMan(output);
-                if (PRINT) System.out.println("random!");
-            }
-            moves.add(move);// add the move to the move list
-        } else { // Second strategy: Attacking
-            if (DEBUG) System.out.println("Second strategy: Attacking");
+        }
+        moves.add(move);// add the move to the move list
 
-            //change rewards to rewards for this strat
-            changeStrategyRewards(2);
+    }
 
-            double[] output = secondNetwork.CalculateBestMove().getOutput();
-            int move = 0;
-            double maxOutcome = Double.NEGATIVE_INFINITY;
-            for (int idx = 0; idx < output.length; idx++) {
-                if (maxOutcome < output[idx]) {
-                    move = idx;
-                    maxOutcome = output[idx];
-                }
-            }
-            double random = rnd.nextDouble();
-            if (!secondNetwork.testing && random < secondNetwork.explorationChance) {
-                move = secondNetwork.TimeBoltzMan(output);
-                if (PRINT) System.out.println("random!");
-            }
-            moves.add(move);// add the move to the move list
+    int calculateMove(int amountOfEnemiesWithPath){
+        TimeDrivenBoltzmanNNFullInput network = this;
+        int move = 0;
+
+        //switch to determine the use of the right network
+        switch (amountOfEnemiesWithPath){
+            case 0: network = this;
+                break;
+            case 1: network = oneEnemyNetwork;
+                break;
+            case 2: network = twoEnemiesNetwork;
+                break;
+            case 3: network = threeEnemiesNetwork;
+                break;
         }
 
+        double[] output = network.CalculateBestMove().getOutput();
+        double maxOutcome = Double.NEGATIVE_INFINITY;
+        for (int idx = 0; idx < output.length; idx++) {
+            if (maxOutcome < output[idx]) {
+                move = idx;
+                maxOutcome = output[idx];
+            }
+        }
+        double random = rnd.nextDouble();
+        if (!network.testing && random < network.explorationChance) {
+            move = network.TimeBoltzMan(output);
+            if (PRINT) System.out.println("random!");
+        }
+        return move;
     }
 
     //TODO doesn't change the values for already active bombs
@@ -107,17 +136,19 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
 
 
-    int checkPathToEnemies(){ //returns ID of enemy to which a path is possible. TODO: Does not return multiple values when more enemies are accessible
+    List checkPathToEnemies(){ //returns ID of enemy to which a path is possible. TODO: Does not return multiple values when more enemies are accessible
 
+
+        List<Integer> returnList = new ArrayList<>();
         ArrayList<AIHandler> listOfEnemies = world.getAi();
         for (int x = 1; x < listOfEnemies.size(); x++) { //offset by one so our own AI is ignored
             //get the X and Y of the enemy
             WorldPosition enemyLocation = world.getPositions(listOfEnemies.get(x).getMan().getX_location(), listOfEnemies.get(x).getMan().getY_location());
 
             //search for paths using aStar
-            return aStar(enemyLocation);
+            returnList.add(aStar(enemyLocation));
         }
-        return -2; //no paths
+        return returnList; //no paths
     }
 
     /**
@@ -211,7 +242,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         }
 
         // if (DEBUG) System.out.println("Processed all positions.");
-        return -2;
+        return -2; //case of no enemy
 
     }
 

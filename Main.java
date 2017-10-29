@@ -100,7 +100,7 @@ public class Main {
                     }
                 }
                 //testing
-                System.out.print(" testing");
+                System.out.println(" testing");
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).setExplorationChance(0);
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).setTesting(true);
                 for (int test = 0; test < gameSettings.getAmountOfTests(); test++) {
