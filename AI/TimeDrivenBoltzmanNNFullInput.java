@@ -71,7 +71,10 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
         return activationList;
     }
 
-
+//Seems to create and return a vector. Probably returns the current state of the game as a single vector, and is possibly unrelated to completing an actual game.
+// n = gridsize. First n items in the vector are the type of tile (hardwall, softwall, open).
+// The second n items are the dangerlevels.
+// The third n items are enemy amounts on a tile. Final n items are indicating if the player is there.
     public double[] CompleteGame() {
         int worldSize = world.getGridSize();
         //int x = man.getX_location();
@@ -81,8 +84,8 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
         for (int xIdx = 0; xIdx < worldSize; xIdx++) {
             for (int yIdx = 0; yIdx < worldSize; yIdx++) {
 
-                WorldPosition pos = world.getPositions(xIdx, yIdx);
-                gridList.add((double) pos.getType() - 1); // get the type of the location
+                WorldPosition pos = world.getPositions(xIdx, yIdx); // Go through all grid locations
+                gridList.add((double) pos.getType() - 1); // get the type of the location ||| Add for every position
                 //-1 hardwall,0 softwall,1 path
 
                 // how long until the bomb explodes?
@@ -92,7 +95,7 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
                     danger = 1 - bomb.getCurrentTimer() / bomb.getMAXTIMER();
                     danger *= (bomb.getPlacedBy() == man ? -1 : 1);
                 }
-                gridList.add(danger);
+                gridList.add(danger); //adds dangerlevel to all positions in the world
                 //is there an enemy bomberman on this position?
                 double isEnemyBomberman = 0;
                 int idx = 0;
@@ -103,7 +106,7 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
                     }
                     idx++;
                 }
-                gridList.add(isEnemyBomberman);
+                gridList.add(isEnemyBomberman); //adds the amount of enemies to all positions in the world
                 double isPlayer = 0;
                 idx = 0;
                 while ((isPlayer == 0) && idx < pos.getBombermanList().size()) {
@@ -113,7 +116,7 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
                     }
                     idx++;
                 }
-                gridList.add(isPlayer);
+                gridList.add(isPlayer); //adds to each tile if the player is there or not
 
             }
         }
@@ -207,9 +210,10 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
         double[] targetforError = targets.clone();
         if (PRINT) System.out.println("expected" + Arrays.toString(targets));
 
-        int idx = man.getPoints().size() - 1;
-        double outcome = man.getPoints().get(idx);
+        int idx = man.getPoints().size() - 1; // get index of arraylocation latest points received
+        double outcome = man.getPoints().get(idx); //save this pointvalue
         if (PRINT) System.out.println("reward:" + outcome);
+
         //calculate max q value
         if (man.getAlive()) {
             ActivationVectorList secondpasslist = mlp.forwardPass(CompleteGame(), activationList);

@@ -63,32 +63,34 @@ public class MLP {
         this.learningRate = learningRate;
     }
 
+    //inputValues is a vector representation of the gamestate
+    //inputVectorList is a neural net with node values, weights and corresponding activation functions.
     public ActivationVectorList forwardPass(double[] inputValues, ActivationVectorList inputVectorList) {
 
-        ActivationVectorList returnVectorList =new ActivationVectorList(inputVectorList);
-        RealVector outputOfLayer = MatrixUtils.createRealVector(inputValues);
+        ActivationVectorList returnVectorList = new ActivationVectorList(inputVectorList); //create a copy of the inputVectorList, but without the values inside the nodes.
+        RealVector outputOfLayer = MatrixUtils.createRealVector(inputValues); //fill vector with inputvalues passed to the method
         outputOfLayer = outputOfLayer.append(1); // add the bias
-        double[][][] weigths = returnVectorList.getWeigths();
-        ArrayList<AbstractActivationFunction> activationFunctions = returnVectorList.getActivationFunctionList();
+        double[][][] weigths = returnVectorList.getWeigths(); //These are the original weights from the inputVectorList
+        ArrayList<AbstractActivationFunction> activationFunctions = returnVectorList.getActivationFunctionList(); //These are the activation functions from the inputVectorList
         returnVectorList.setActivationList(new ArrayList<RealVector>());
-        returnVectorList.AddActivationLayer(outputOfLayer);
+        returnVectorList.AddActivationLayer(outputOfLayer); //set the node values of the returnVectorList
 
-        for (int layer = 0; layer < weigths.length; layer++) {
+        for (int layer = 0; layer < weigths.length; layer++) { // go through all the layers
 
-            RealMatrix weigthMatrixOfLayer = MatrixUtils.createRealMatrix(weigths[layer]);
+            RealMatrix weigthMatrixOfLayer = MatrixUtils.createRealMatrix(weigths[layer]); //put the weights of the corresponding layer in the matrix
 
-            outputOfLayer = weigthMatrixOfLayer.preMultiply(outputOfLayer);
-            outputOfLayer = activationFunctions.get(layer).ActivationFunction(outputOfLayer);
+            outputOfLayer = weigthMatrixOfLayer.preMultiply(outputOfLayer); //premultiply the weights with the layer nodes
+            outputOfLayer = activationFunctions.get(layer).ActivationFunction(outputOfLayer); //Apply activation function to squash the results
 
             if (layer < weigths.length - 1) outputOfLayer = outputOfLayer.append(1); // add the bias
-            returnVectorList.AddActivationLayer(outputOfLayer);
+            returnVectorList.AddActivationLayer(outputOfLayer); //Add the results to the return list
 
         }
 
-        return returnVectorList;
+        return returnVectorList; //Return the resulting network
     }
 
-   public ActivationVectorList BackwardPass(ActivationVectorList activationList, double[] target) {
+   public ActivationVectorList BackwardPass(ActivationVectorList activationList, double[] target) { //gets called by updateWeights() in each AI class
         ArrayList<RealMatrix> deltaMatrixList = new ArrayList<>();
         double[][][] weigthList = activationList.getWeigths();
 

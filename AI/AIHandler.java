@@ -35,7 +35,7 @@ public class AIHandler implements Serializable {
 
     protected int generationSize=100;
     protected int epochSize = 1000;
-    protected boolean PRINT = false;
+    protected boolean PRINT = true;
 
     public AIHandler(GameWorld world, int manIndex) {
         this.world = world;

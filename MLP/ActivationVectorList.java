@@ -9,8 +9,8 @@ import java.util.ArrayList;
  * Created by joseph on 8-3-2017.
  */
 public class ActivationVectorList implements Serializable{
-    private ArrayList<RealVector> activationList;
-    private double[][][] weigths;
+    private ArrayList<RealVector> activationList; //keeps track of the values of each node in each layer
+    private double[][][] weigths; //weights between layers
     private ArrayList<AbstractActivationFunction> activationFunctionList;
 
     public ActivationVectorList(double[][][] weigths, ArrayList<AbstractActivationFunction> activationFunctionList) {
