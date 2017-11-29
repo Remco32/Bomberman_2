@@ -92,7 +92,7 @@ public class MLP {
 
    public ActivationVectorList BackwardPass(ActivationVectorList activationList, double[] target) { //gets called by updateWeights() in each AI class
         ArrayList<RealMatrix> deltaMatrixList = new ArrayList<>();
-        double[][][] weigthList = activationList.getWeigths();
+        double[][][] weigthList = activationList.getWeigths(); //get the weights from the
 
         int amountOfWeigthMatrixes = activationList.getWeigths().length; // the amount of weigthmatrixes that should be updated
         if(print)System.out.println("new round\n\n\n\n");

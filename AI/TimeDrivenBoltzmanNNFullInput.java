@@ -203,37 +203,37 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
 
     }
 
-
+    //Gets called by the gameloop
     public void UpdateWeights() {
 
         double[] targets = activationList.getOutput(); // get the expected Q-values
-        double[] targetforError = targets.clone();
+        double[] targetforError = targets.clone(); //make a copy
         if (PRINT) System.out.println("expected" + Arrays.toString(targets));
 
-        int idx = man.getPoints().size() - 1; // get index of arraylocation latest points received
-        double outcome = man.getPoints().get(idx); //save this pointvalue
+        int idx = man.getPoints().size() - 1; // get index of array location latest points received of agent
+        double outcome = man.getPoints().get(idx); //save this point value
         if (PRINT) System.out.println("reward:" + outcome);
 
         //calculate max q value
         if (man.getAlive()) {
-            ActivationVectorList secondpasslist = mlp.forwardPass(CompleteGame(), activationList);
-            double[] secondpass = secondpasslist.getOutput();
+            ActivationVectorList secondpasslist = mlp.forwardPass(CompleteGame(), activationList); //do a forwardspass with the current gamestate and the network of this object. Save the result.
+            double[] secondpass = secondpasslist.getOutput(); // get the values of the output layer
             double maxOutcome = Double.NEGATIVE_INFINITY;
-            for (int moveidx = 0; moveidx < secondpass.length; moveidx++) {
-                if (maxOutcome < secondpass[moveidx]) {
+            for (int moveidx = 0; moveidx < secondpass.length; moveidx++) { // go through all output values
+                if (maxOutcome < secondpass[moveidx]) { //sets the value of the output node to negative infinity if it was somehow lower.
                     maxOutcome = secondpass[moveidx];
                 }
             }
             if (PRINT) System.out.println("second pass:" + discount * maxOutcome);
-            outcome += discount * maxOutcome;
+            outcome += discount * maxOutcome; //add the Q-value after compensating for the discount
         }
 
-        targets[getLastMove()] = outcome;
+        targets[getLastMove()] = outcome; //change the target value of the last move made to the outcome
 
         if (PRINT) System.out.println("outcome:" + outcome);
         if (PRINT) System.out.println("output" + Arrays.toString(targets) + "\n\n");
-        error.add(mlp.TotalError(targets, targetforError));
-        activationList = mlp.BackwardPass(activationList, targets);
+        error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
+        activationList = mlp.BackwardPass(activationList, targets); //update the weights using the new target
     }
 
     public String toString() {

@@ -134,14 +134,10 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         }
     }
 
-
-
-    List checkPathToEnemies(){ //returns ID of enemy to which a path is possible. TODO: Does not return multiple values when more enemies are accessible
-
-
+    List checkPathToEnemies() { //returns ID of enemy to which a path is possible. TODO: Does not return multiple values when more enemies are accessible
         List<Integer> returnList = new ArrayList<>();
         ArrayList<AIHandler> listOfEnemies = world.getAi();
-        for (int x = 1; x < listOfEnemies.size(); x++) { //offset by one so our own AI is ignored
+        for (int x = 1; x < listOfEnemies.size(); x++) { //offset by one so our own agent is ignored
             //get the X and Y of the enemy
             WorldPosition enemyLocation = world.getPositions(listOfEnemies.get(x).getMan().getX_location(), listOfEnemies.get(x).getMan().getY_location());
 
@@ -319,4 +315,11 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         return activationList;
     }
 **/
+
+/**
+    public void UpdateWeights(){
+
+        return;
+    }
+ **/
 }
