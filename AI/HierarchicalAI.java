@@ -17,6 +17,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
 
 public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     private boolean DEBUG = true;
+    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     WorldPosition targetPosition;
     //protected MLP mlp2;
     TimeDrivenBoltzmanNNFullInput oneEnemyNetwork;
@@ -53,17 +54,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         int move = 0;
         int enemyCount = 0;
 
-
-        //go through the list to count how many enemies we have a path to
-
-        for(int i = 0; i < targetEnemies.size(); i++){
-            int enemy = (int)targetEnemies.get(i);
-
-            if (enemy == 1 || enemy == 2 || enemy == 3) {
-                enemyCount++;
-            }
-        }
-
+        enemyCount = targetEnemies.size();
 
         if (enemyCount > 0) { // Second strategy: Attacking
             if (DEBUG) System.out.println("Second strategy: Attacking. Amount of targets: " + enemyCount);
@@ -87,16 +78,30 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         TimeDrivenBoltzmanNNFullInput network = this;
         int move = 0;
 
-        //switch to determine the use of the right network
-        switch (amountOfEnemiesWithPath){
-            case 0: network = this;
-                break;
-            case 1: network = oneEnemyNetwork;
-                break;
-            case 2: network = twoEnemiesNetwork;
-                break;
-            case 3: network = threeEnemiesNetwork;
-                break;
+        if(SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES) { //global variable to decide if we use specialized networks for each amount of enemies
+            //switch to determine the use of the right network
+            switch (amountOfEnemiesWithPath) {
+                case 0:
+                    network = this;
+                    break;
+                case 1:
+                    network = oneEnemyNetwork;
+                    break;
+                case 2:
+                    network = twoEnemiesNetwork;
+                    break;
+                case 3:
+                    network = threeEnemiesNetwork;
+                    break;
+            }
+        }else{ //use only two networks: pathfinding and fight
+            if(amountOfEnemiesWithPath > 0){
+                network = oneEnemyNetwork;
+            }
+            else{
+                network = this;
+            }
+
         }
 
         double[] output = network.CalculateBestMove().getOutput();
@@ -115,8 +120,8 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         return move;
     }
 
-    //TODO doesn't change the values for already active bombs
-    //TODO also affects other AI using reinforcement learning
+    //doesn't change the values for already active bombs. Shouldn't be a problem. A kill caused during the pathfinding strategy is a mere accident.
+    //TODO also affects other AI using reinforcement learning - can be a problem depending on how the experiment is run (who is the agent playing against?)
     //Changes the rewards to the other set
     void changeStrategyRewards(int strategyNumber){
         if(strategyNumber == 1) { //Pathfinding
@@ -134,17 +139,36 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         }
     }
 
-    List checkPathToEnemies() { //returns ID of enemy to which a path is possible. TODO: Does not return multiple values when more enemies are accessible
+    List checkPathToEnemies() { //returns ID of enemy to which a path is possible.
         List<Integer> returnList = new ArrayList<>();
         ArrayList<AIHandler> listOfEnemies = world.getAi();
+
+        //go through all enemies
         for (int x = 1; x < listOfEnemies.size(); x++) { //offset by one so our own agent is ignored
             //get the X and Y of the enemy
             WorldPosition enemyLocation = world.getPositions(listOfEnemies.get(x).getMan().getX_location(), listOfEnemies.get(x).getMan().getY_location());
 
             //search for paths using aStar
             returnList.add(aStar(enemyLocation));
+            //list can contain negative values that have to be filtered
         }
-        return returnList; //no paths
+
+        //filter duplicates
+        Set<Integer> hashSet = new HashSet<>();
+        hashSet.addAll(returnList); //add all to the hashset
+        returnList.clear(); //empty the returnlist
+        returnList.addAll(hashSet); //fill it again, now without any duplicates
+
+        //go through the list to see if -2 is returned for some of the agents, remove those elements from the list
+        for(int i = 0; i < returnList.size(); i++ ){
+            if(returnList.get(i) < 0){
+                returnList.remove(i);
+                i--; // to offset the fact that the list is now one element shorter
+            }
+
+        }
+
+        return returnList;
     }
 
     /**
@@ -164,15 +188,16 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
      }
      **/
 
-    //TODO doesn't work completely like it should.
+    //TODO AStar doesn't work perfectly all the time. Sometimes accessible enemies are not detected.
     //One issue is that enemies move during the pathfinding. This means a path can be found to an old location with no enemy on it anymore.
+    //Receives the position of an enemy as argument.
     int aStar(WorldPosition targetPosition) { //returns ID of enemy to which a path is found
         this.targetPosition = targetPosition;
         int targetID;
         if (targetPosition.getBombermanList().isEmpty()) {
-            targetID = -1;
+            targetID = -1; //position given has no enemy at this point
         } else {
-            targetID = targetPosition.getBombermanList().get(0).getId();
+            targetID = targetPosition.getBombermanList().get(0).getId(); //get the ID of the enemy we are finding a path to
         }
         WorldPosition previousPosition = world.getPositions(man.getX_location(), man.getY_location()); // set our startingposition as the previous position. This object is used to compare pathlenghts.
         calculateAndSetPathscore(previousPosition); //set its score, which should be 0
@@ -182,7 +207,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
         //add possible locations around agent to the openlist
 
-        addSurroundingLocations(openList, world.getPositions(man.getX_location(), man.getY_location()));
+        addSurroundingLocations(openList, world.getPositions(man.getX_location(), man.getY_location())); //addSurroundingLocations() doesn't add locations that are inaccessible
         WorldPosition positionConsidering = openList.get(0); //take first item
 
         //loop until we found our targetPosition, our until we run out of positions in the openlist

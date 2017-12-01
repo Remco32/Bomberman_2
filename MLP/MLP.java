@@ -18,7 +18,7 @@ public class MLP {
     public static final int SIGMOID = 1;
     public static final int LeakyRELU = 2;
 
-    boolean print=true;
+    boolean print=false;
 
     public void setLearningRate(double learningRate) {
         this.learningRate = learningRate;
