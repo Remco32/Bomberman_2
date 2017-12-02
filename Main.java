@@ -11,12 +11,18 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by joseph on 25/03/2017.
  */
 public class Main {
+
+    long startTimeTrials = System.currentTimeMillis();
+    int currentEpoch;
+    int currentGeneration;
+    static int AMOUNT_OF_EPOCHS = 2;
+    static int AMOUNT_OF_GENERATIONS = 100;
+    static int AMOUNT_OF_TESTS = 1;
 
     public static void main(String[] args) {
         // parameters
@@ -39,19 +45,45 @@ public class Main {
 //        nn2.setTypeNetwork(NNSettings.NEURAL_NETWORK_FULL_INPUT);
 //        nnSettingsArrayList.add(nn2);
         nn1.setLearningRate(0.0001);
-        Gset.setAmountOfEpochs(100); //Amount of games played per set
-        Gset.setAmountOfGenerations(100); //Amount of sets of all training games and then all test games
-        Gset.setAmountOfTests(10); //amount of test trials after each set of training trials
+        Gset.setAmountOfEpochs(AMOUNT_OF_EPOCHS); //Amount of games played per set
+        Gset.setAmountOfGenerations(AMOUNT_OF_GENERATIONS); //Amount of sets of all training games and then all test games
+        Gset.setAmountOfTests(AMOUNT_OF_TESTS); //amount of test trials after each set of training trials
         Gset.setAmountOfPlayers(4);
         Gset.setAcummulateTest(1);
 
-       // double time = System.currentTimeMillis();
-       // System.out.println("Current time" + System.currentTimeMillis());
+        double time = System.currentTimeMillis();
+        //System.out.println("Current time" + System.currentTimeMillis());
         main.StartTraining(Gset, nnSettingsArrayList);
 
-      //  System.out.println("passed time:" + (System.currentTimeMillis()-time)/1000);
+        System.out.println("passed time:" + (System.currentTimeMillis() - time) / 1000);
 
+    }
 
+    void printTimeRemaining(){
+        double estimatedTimeLeft = 0;
+        long totalTimeElapsed = System.currentTimeMillis() - startTimeTrials;
+        if (currentGeneration > 1) {
+
+            int remainingGenerations = AMOUNT_OF_GENERATIONS - currentGeneration;
+            int completedGenerations = currentGeneration - 1;
+            double averageTimePerTrial = totalTimeElapsed / completedGenerations;
+
+            estimatedTimeLeft = averageTimePerTrial * remainingGenerations + averageTimePerTrial; // + averageTime for off-by-one error
+
+        }
+
+        int minutes = (int) (estimatedTimeLeft / 1000 / 60);
+        int seconds = (int) (estimatedTimeLeft / 1000 % 60);
+        int hours = minutes/60;
+        minutes = minutes - hours*60;
+
+        String timeLeft = "Time left: ~";
+        if(hours > 0) timeLeft = timeLeft.concat(hours + "h");
+        if(minutes > 0) timeLeft = timeLeft.concat(minutes + "m");
+        if(seconds > 0)  timeLeft = timeLeft.concat(seconds + "s");
+        if(seconds == 0 && minutes == 0) timeLeft = timeLeft.concat("unknown");
+
+        System.out.println(timeLeft);
     }
 
     public void StartTraining(GameSettings gameSettings, ArrayList<NNSettings> NNSettingsList) {
@@ -86,6 +118,7 @@ public class Main {
 
             // start training
             for (int gen = 0; gen < gameSettings.getAmountOfGenerations(); gen++) {
+                this.currentGeneration = gen;
                 //set the exploration chance
                 for (int x = 0; x < NNSettingsList.size(); x++)
                     ai.get(x).setExplorationChance(NNSettingsList.get(x).getExplorationRate());
@@ -94,13 +127,14 @@ public class Main {
                 //only test the first time because we need a baseline
                 if (gen > 0) {
                     for (int epoch = 0; epoch < gameSettings.getAmountOfEpochs(); epoch++) {
+                        this.currentEpoch = epoch;
                         world.InitWorld();
                         for (AIHandler temp : ai) temp.setNewBomberman(); // update the bombermans in the handlers
                         world.GameLoop();
                     }
                 }
                 //testing
-                System.out.println("Testing: generation "+gen);
+                System.out.println("Testing generation "+gen);
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).setExplorationChance(0);
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).setTesting(true);
                 for (int test = 0; test < gameSettings.getAmountOfTests(); test++) {
@@ -109,12 +143,12 @@ public class Main {
                     world.GameLoop();
                 }
 
-                //updates all the testvalues from epoch level to generation level
+                //updates all the testvalues from currentEpoch level to generation level
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).newGeneration();
 
-                double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
-                System.out.print("\rProcent done:" + procentDone);
-                System.out.flush();
+                //double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
+                //System.out.println("\rPercent done:" + procentDone);
+                //System.out.flush();
                 if (gen == gameSettings.getAmountOfGenerations() - 1) {
                     for (int x = 0; x < NNSettingsList.size(); x++) {
                         NNSettings setting = NNSettingsList.get(x);
@@ -124,7 +158,7 @@ public class Main {
                         }
                     }
                 }
-
+                printTimeRemaining();
             }
             //store in arraylists
             accumulateWinrate.add(new ArrayList<Double>());

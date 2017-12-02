@@ -63,7 +63,7 @@ public class TrainParallel implements Runnable{
                 world.GameLoop();
             }
 
-            //updates all the testvalues from epoch level to generation level
+            //updates all the testvalues from currentEpoch level to generation level
             for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).newGeneration();
 
             procentDone += ((1 / (double) gameSettings.getAmountOfGenerations())/(double) gameSettings.getAcummulateTest())*100;
