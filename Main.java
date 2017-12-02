@@ -20,9 +20,9 @@ public class Main {
     long startTimeTrials = System.currentTimeMillis();
     int currentEpoch;
     int currentGeneration;
-    static int AMOUNT_OF_EPOCHS = 2;
-    static int AMOUNT_OF_GENERATIONS = 100;
-    static int AMOUNT_OF_TESTS = 1;
+    static int AMOUNT_OF_EPOCHS = 5;
+    static int AMOUNT_OF_GENERATIONS = 5;
+    static int AMOUNT_OF_TESTS = 2;
 
     public static void main(String[] args) {
         // parameters
@@ -36,7 +36,8 @@ public class Main {
         nn1.setTypeNetwork(NNSettings.HIERARCHICAL);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(0.3);
-        nn1.setLOADWEIGHTS(false);
+        nn1.setLOADWEIGHTS(true);
+        nn1.setSTOREDATA(false);
 
 
 //        NNSettings nn2 = new NNSettings();
@@ -51,11 +52,9 @@ public class Main {
         Gset.setAmountOfPlayers(4);
         Gset.setAcummulateTest(1);
 
-        double time = System.currentTimeMillis();
         //System.out.println("Current time" + System.currentTimeMillis());
         main.StartTraining(Gset, nnSettingsArrayList);
 
-        System.out.println("passed time:" + (System.currentTimeMillis() - time) / 1000);
 
     }
 
