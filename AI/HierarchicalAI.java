@@ -16,7 +16,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
  */
 
 public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     WorldPosition targetPosition;
     //protected MLP mlp2;
@@ -208,7 +208,13 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         //add possible locations around agent to the openlist
 
         addSurroundingLocations(openList, world.getPositions(man.getX_location(), man.getY_location())); //addSurroundingLocations() doesn't add locations that are inaccessible
+
+        if(openList.isEmpty()){
+            return -3; //something went wrong with the open list
+        }
+
         WorldPosition positionConsidering = openList.get(0); //take first item
+
 
         //loop until we found our targetPosition, our until we run out of positions in the openlist
         while (!openList.isEmpty()) {

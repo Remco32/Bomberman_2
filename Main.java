@@ -39,9 +39,9 @@ public class Main {
 //        nn2.setTypeNetwork(NNSettings.NEURAL_NETWORK_FULL_INPUT);
 //        nnSettingsArrayList.add(nn2);
         nn1.setLearningRate(0.0001);
-        Gset.setAmountOfEpochs(1000);
-        Gset.setAmountOfGenerations(100);
-        Gset.setAmountOfTests(100);
+        Gset.setAmountOfEpochs(100); //Amount of games played per set
+        Gset.setAmountOfGenerations(100); //Amount of sets of all training games and then all test games
+        Gset.setAmountOfTests(10); //amount of test trials after each set of training trials
         Gset.setAmountOfPlayers(4);
         Gset.setAcummulateTest(1);
 
@@ -100,7 +100,7 @@ public class Main {
                     }
                 }
                 //testing
-                System.out.println(" testing");
+                System.out.println("Testing: generation "+gen);
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).setExplorationChance(0);
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).setTesting(true);
                 for (int test = 0; test < gameSettings.getAmountOfTests(); test++) {
@@ -246,7 +246,7 @@ public class Main {
             nn.setExplorationChance(setting.getExplorationRate());
             nn.setGenerationSize(gSet.getAmountOfGenerations());
             nn.setEpochSize(gSet.getAmountOfEpochs());
-            System.out.println("Created neural net for player " + idx);
+            //System.out.println("Created neural net for player " + idx);
             if (setting.isLOADWEIGHTS()) {
             nn.getActivationVectorlist().setWeigths(new Load().Load());
             nn.setLearningRate(0);

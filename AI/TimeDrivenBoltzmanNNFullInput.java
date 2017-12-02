@@ -45,7 +45,7 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
 
         localTime = TIME;
 
-        System.out.println("localTIme =" + localTime);
+        //System.out.println("localTIme =" + localTime);
 
 
         viewingRange = world.getGridSize(); //only for whole grid
