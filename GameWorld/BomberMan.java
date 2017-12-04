@@ -17,6 +17,10 @@ public class BomberMan {
     private GameWorld world;
     static int MOVECOST = -1;
 
+    private int deathCost = -300;
+    private int killReward = 100;
+    private int wallReward = 30;
+
 
     BomberMan(int x, int y, int id, GameWorld world) {
         this.x_location = x;
@@ -133,5 +137,21 @@ public class BomberMan {
     }
 
     static public void setMOVECOST(int cost){MOVECOST = cost;}
+
+    public int getWallReward(){
+        return wallReward;
+    }
+
+    public int getKillReward(){
+        return killReward;
+    }
+
+    public void setWallReward(int value){
+        wallReward = value;
+    }
+
+    public void setKillReward(int value){
+        killReward = value;
+    }
 
 }

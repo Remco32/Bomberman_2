@@ -36,8 +36,8 @@ public class Main {
         nn1.setTypeNetwork(NNSettings.HIERARCHICAL);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(0.3);
-        nn1.setLOADWEIGHTS(true);
-        nn1.setSTOREDATA(false);
+        nn1.setLOADWEIGHTS(false);
+        nn1.setSTOREDATA(true);
 
 
 //        NNSettings nn2 = new NNSettings();

@@ -126,15 +126,15 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     void changeStrategyRewards(int strategyNumber){
         if(strategyNumber == 1) { //Pathfinding
             //Bomb.setDIECOST(-300); redundant
-            Bomb.setKillReward(0);
-            Bomb.setWallReward(30);
+            man.setKillReward(0);
+            man.setWallReward(30);
             //BomberMan.setMOVECOST(-1); redundant
         }
 
         if(strategyNumber == 2) { //Attacking
             //Bomb.setDIECOST(-300); redundant
-            Bomb.setKillReward(100);
-            Bomb.setWallReward(0);
+            man.setKillReward(100);
+            man.setWallReward(0);
             //BomberMan.setMOVECOST(-1); redundant
         }
     }

@@ -18,9 +18,9 @@ public class Bomb {
     private BomberMan placedBy;
     private Boolean exploded;
     private GameWorld world;
-    static int DIECOST=-300;
-    static int KillReward=100;
-    static int wallReward=30;
+    static int DIECOST = -300;
+    static int KillReward = 100;
+    static int wallReward = 30;
 
     Bomb(int x, int y, BomberMan by, GameWorld world) {
 
@@ -82,8 +82,8 @@ public class Bomb {
     Boolean ExplodeHitLocation(int xTemp,int yTemp){
         if (!world.getPositions(xTemp,yTemp).bombermanList.isEmpty()) {
             for (BomberMan man : world.positions[xTemp][yTemp].bombermanList) {
-                add_SubtractPoints(placedBy,KillReward); // 300 points for killing
-                add_SubtractPoints(man,DIECOST);//-100 points for dying
+                add_SubtractPoints(placedBy,placedBy.getKillReward());
+                add_SubtractPoints(man,DIECOST);
                 man.Die();
                 if(world.getPrint())System.out.println("player " + man.getId() + " has been killed by player " + placedBy.getId());
             }
@@ -94,7 +94,7 @@ public class Bomb {
             return true;
         } else if (world.positions[xTemp][yTemp].type == 1) {
             world.positions[xTemp][yTemp].type = 2;
-            add_SubtractPoints(placedBy,wallReward);//20 points for destroying a wall
+            add_SubtractPoints(placedBy,placedBy.getWallReward());
             return true;
         }
         return false;
