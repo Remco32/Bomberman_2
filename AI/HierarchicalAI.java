@@ -1,6 +1,7 @@
 package AI;
 
 import GameWorld.*;
+import MLP.AbstractActivationFunction;
 import util.GameSettings;
 import util.NNSettings;
 
@@ -24,7 +25,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     TimeDrivenBoltzmanNNFullInput twoEnemiesNetwork;
     TimeDrivenBoltzmanNNFullInput threeEnemiesNetwork;
 
-    int currentStrategy; //0 = pathfinding, 1 = one enemy, etc
+    private int currentStrategy = 0; //0 = pathfinding, 1 = one enemy, etc
 
     public ActivationVectorList activationList;
 
@@ -47,6 +48,9 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
             threeEnemiesNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
         }
 
+        ArrayList<AbstractActivationFunction> activationFunctionArrayList = mlp.CreateActivationFunctionList(setting.getFunctions());
+        double[][][] initWeights = mlp.CreateWeights(setting.getWeigths(), inputSize);
+        activationList = new ActivationVectorList(initWeights, activationFunctionArrayList);
 
         if (DEBUG) System.out.println("Using hierachical");
     }
@@ -63,14 +67,14 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
             //change rewards to rewards for this strat
             currentStrategy = enemyCount;
             changeStrategyRewards(2); //Rewards for attacking strat
-            move = calculateMove(enemyCount);
+            move = calculateMove();
 
         } else {
             if (DEBUG) System.out.println("First strategy: Pathfinding");
             //change rewards to rewards for this strat
             currentStrategy = enemyCount;
             changeStrategyRewards(1); //Rewards for pathfinding strat
-            move = calculateMove(0);
+            move = calculateMove();
 
         }
         //add to movebuffer
@@ -78,7 +82,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     }
 
-    int calculateMove(int amountOfEnemiesWithPath) {
+    int calculateMove() {
         int move = 0;
         TimeDrivenBoltzmanNNFullInput network = getCorrectNetworkForStrategy();
 
