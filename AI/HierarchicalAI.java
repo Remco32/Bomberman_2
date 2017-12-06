@@ -17,7 +17,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
  */
 
 public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
-    private boolean DEBUG = false;
+    private boolean DEBUG = true;
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     WorldPosition targetPosition;
     //protected MLP mlp2;
@@ -50,7 +50,8 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
         ArrayList<AbstractActivationFunction> activationFunctionArrayList = mlp.CreateActivationFunctionList(setting.getFunctions());
         double[][][] initWeights = mlp.CreateWeights(setting.getWeigths(), inputSize);
-        activationList = new ActivationVectorList(initWeights, activationFunctionArrayList);
+        String name = "Hoi";
+        activationList = new ActivationVectorList(initWeights, activationFunctionArrayList, name);
 
         if (DEBUG) System.out.println("Using hierachical");
     }
@@ -339,7 +340,13 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     public void UpdateWeights(){
 
         //select correct network
-        activationList = getCorrectNetworkForStrategy().getActivationList();
+        activationList = getCorrectNetworkForStrategy().getActivationList(); //get the network of the right strategy
+        //filthy hack
+        activationList.setNetworkName("Strategy "+currentStrategy);
+        //debug
+        if(currentStrategy > 0){
+            if (DEBUG) System.out.println("Attacking");
+        }
         super.UpdateWeights();
     }
 
