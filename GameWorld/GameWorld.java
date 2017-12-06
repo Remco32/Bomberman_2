@@ -119,10 +119,10 @@ public class GameWorld {
 
         while (PlayerCheck()) {
 
-            for (AIHandler temp : localAIList) temp.AddMoveToBuffer();
+            for (AIHandler temp : localAIList) temp.AddMoveToBuffer(); //gather moves
 
             // get the last appended move
-            for (AIHandler temp : localAIList) temp.MakeMove();
+            for (AIHandler temp : localAIList) temp.MakeMove(); //make the moves
 
             // update all bombs
             for (Bomb bomb : activeBombList) bomb.Round();

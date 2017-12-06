@@ -17,7 +17,7 @@ public class BomberMan {
     private GameWorld world;
     static int MOVECOST = -1;
 
-    private int deathCost = -300;
+    //private int deathCost = -300; //still to be implemented
     private int killReward = 100;
     private int wallReward = 30;
 

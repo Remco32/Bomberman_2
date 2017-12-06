@@ -24,6 +24,8 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     TimeDrivenBoltzmanNNFullInput twoEnemiesNetwork;
     TimeDrivenBoltzmanNNFullInput threeEnemiesNetwork;
 
+    int currentStrategy; //0 = pathfinding, 1 = one enemy, etc
+
     public ActivationVectorList activationList;
 
 
@@ -51,62 +53,41 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     public void AddMoveToBuffer() {
         List targetEnemies = checkPathToEnemies();
-        int move = 0;
-        int enemyCount = 0;
+        int move;
+        int enemyCount;
 
         enemyCount = targetEnemies.size();
 
         if (enemyCount > 0) { // Second strategy: Attacking
             if (DEBUG) System.out.println("Second strategy: Attacking. Amount of targets: " + enemyCount);
             //change rewards to rewards for this strat
-            changeStrategyRewards(2);
+            currentStrategy = enemyCount;
+            changeStrategyRewards(2); //Rewards for attacking strat
             move = calculateMove(enemyCount);
 
         } else {
             if (DEBUG) System.out.println("First strategy: Pathfinding");
-
             //change rewards to rewards for this strat
-            changeStrategyRewards(1);
+            currentStrategy = enemyCount;
+            changeStrategyRewards(1); //Rewards for pathfinding strat
             move = calculateMove(0);
 
         }
+        //add to movebuffer
         moves.add(move);// add the move to the move list
 
     }
 
-    int calculateMove(int amountOfEnemiesWithPath){
-        TimeDrivenBoltzmanNNFullInput network = this;
+    int calculateMove(int amountOfEnemiesWithPath) {
         int move = 0;
+        TimeDrivenBoltzmanNNFullInput network = getCorrectNetworkForStrategy();
 
-        if(SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES) { //global variable to decide if we use specialized networks for each amount of enemies
-            //switch to determine the use of the right network
-            switch (amountOfEnemiesWithPath) {
-                case 0:
-                    network = this;
-                    break;
-                case 1:
-                    network = oneEnemyNetwork;
-                    break;
-                case 2:
-                    network = twoEnemiesNetwork;
-                    break;
-                case 3:
-                    network = threeEnemiesNetwork;
-                    break;
-            }
-        }else{ //use only two networks: pathfinding and fight
-            if(amountOfEnemiesWithPath > 0){
-                network = oneEnemyNetwork;
-            }
-            else{
-                network = this;
-            }
+        //Forwardpass
+        network.activationList = mlp.forwardPass(CompleteGame(), activationList);
 
-        }
-
-        double[] output = network.CalculateBestMove().getOutput();
+        double[] output = network.CalculateBestMove().getOutput(); //get the outputlayer of the network
         double maxOutcome = Double.NEGATIVE_INFINITY;
-        for (int idx = 0; idx < output.length; idx++) {
+        for (int idx = 0; idx < output.length; idx++) { //finds highest value
             if (maxOutcome < output[idx]) {
                 move = idx;
                 maxOutcome = output[idx];
@@ -114,14 +95,13 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         }
         double random = rnd.nextDouble();
         if (!network.testing && random < network.explorationChance) {
-            move = network.TimeBoltzMan(output);
+            move = network.TimeBoltzMan(output); //make a "random" move instead
             if (PRINT) System.out.println("random!");
         }
         return move;
     }
 
     //doesn't change the values for already active bombs. Shouldn't be a problem. A kill caused during the pathfinding strategy is a mere accident.
-    //TODO also affects other AI using reinforcement learning - can be a problem depending on how the experiment is run (who is the agent playing against?)
     //Changes the rewards to the other set
     void changeStrategyRewards(int strategyNumber){
         if(strategyNumber == 1) { //Pathfinding
@@ -340,6 +320,10 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     }
 
+    int getCurrentStrategy(){
+        return currentStrategy;
+    }
+
 /**
     public ActivationVectorList CalculateBestMove(MLP mlp) {
         activationList = mlp.forwardPass(CompleteGame(), activationList);
@@ -347,10 +331,43 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     }
 **/
 
-/**
+
     public void UpdateWeights(){
 
-        return;
+        //select correct network
+        activationList = getCorrectNetworkForStrategy().getActivationList();
+        super.UpdateWeights();
     }
- **/
+
+    TimeDrivenBoltzmanNNFullInput getCorrectNetworkForStrategy(){
+        TimeDrivenBoltzmanNNFullInput network = this;
+        if(SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES) { //global variable to decide if we use specialized networks for each amount of enemies
+            //switch to determine the use of the right network
+            switch (currentStrategy) {
+                case 0:
+                    network = this;
+                    break;
+                case 1:
+                    network = oneEnemyNetwork;
+                    break;
+                case 2:
+                    network = twoEnemiesNetwork;
+                    break;
+                case 3:
+                    network = threeEnemiesNetwork;
+                    break;
+            }
+        }else{ //use only two networks: pathfinding and fight
+            if(currentStrategy > 0){
+                network = oneEnemyNetwork;
+            }
+            else{
+                network = this;
+            }
+
+        }
+
+        return network;
+    }
+
 }
