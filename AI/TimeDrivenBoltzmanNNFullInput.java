@@ -234,6 +234,7 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
         if (PRINT) System.out.println("output" + Arrays.toString(targets) + "\n\n");
         error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
         activationList = mlp.BackwardPass(activationList, targets); //update the weights using the new target
+        if (PRINT) System.out.println();
     }
 
     public String toString() {

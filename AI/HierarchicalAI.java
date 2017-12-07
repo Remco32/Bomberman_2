@@ -341,7 +341,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
         //select correct network
         activationList = getCorrectNetworkForStrategy().getActivationList(); //get the network of the right strategy
-        //filthy hack
+        //filthy hack //todo remove filthy hack
         activationList.setNetworkName("Strategy "+currentStrategy);
         //debug
         if(currentStrategy > 0){
@@ -351,34 +351,30 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     }
 
     TimeDrivenBoltzmanNNFullInput getCorrectNetworkForStrategy(){
-        TimeDrivenBoltzmanNNFullInput network = this;
         if(SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES) { //global variable to decide if we use specialized networks for each amount of enemies
             //switch to determine the use of the right network
             switch (currentStrategy) {
                 case 0:
-                    network = this;
-                    break;
+                    return this;
                 case 1:
-                    network = oneEnemyNetwork;
-                    break;
+                    return this.oneEnemyNetwork;
                 case 2:
-                    network = twoEnemiesNetwork;
-                    break;
+                    return this.twoEnemiesNetwork;
                 case 3:
-                    network = threeEnemiesNetwork;
-                    break;
+                    return this.threeEnemiesNetwork;
             }
         }else{ //use only two networks: pathfinding and fight
             if(currentStrategy > 0){
-                network = oneEnemyNetwork;
+                return this.oneEnemyNetwork;
             }
             else{
-                network = this;
+                return this;
             }
 
         }
 
-        return network;
+        return this;
+
     }
 
 }
