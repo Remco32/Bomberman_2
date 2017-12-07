@@ -246,4 +246,8 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
         return activationList;
     }
 
+    public void setActivationList(ActivationVectorList activationList){
+        this.activationList = activationList;
+    }
+
 }

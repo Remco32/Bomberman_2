@@ -21,6 +21,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     WorldPosition targetPosition;
     //protected MLP mlp2;
+    TimeDrivenBoltzmanNNFullInput pathFindingNetwork;
     TimeDrivenBoltzmanNNFullInput oneEnemyNetwork;
     TimeDrivenBoltzmanNNFullInput twoEnemiesNetwork;
     TimeDrivenBoltzmanNNFullInput threeEnemiesNetwork;
@@ -36,6 +37,8 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
         super(world, manIndex, setting, gSet);
         this.world = world;
+
+        pathFindingNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
         oneEnemyNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
@@ -103,6 +106,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
             move = network.TimeBoltzMan(output); //make a "random" move instead
             if (PRINT) System.out.println("random!");
         }
+        network.setActivationList(network.activationList);
         return move;
     }
 
@@ -339,23 +343,56 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     public void UpdateWeights(){
 
+        ActivationVectorList activationList;
         //select correct network
-        activationList = getCorrectNetworkForStrategy().getActivationList(); //get the network of the right strategy
+        TimeDrivenBoltzmanNNFullInput correctNetwork = getCorrectNetworkForStrategy();
+        activationList = correctNetwork.getActivationList(); //get the network of the right strategy
         //filthy hack //todo remove filthy hack
         activationList.setNetworkName("Strategy "+currentStrategy);
         //debug
         if(currentStrategy > 0){
             if (DEBUG) System.out.println("Attacking");
         }
-        super.UpdateWeights();
+        double[] targets = activationList.getOutput(); // get the expected Q-values
+        double[] targetforError = targets.clone(); //make a copy
+        if (PRINT) System.out.println("expected" + Arrays.toString(targets));
+
+        int idx = man.getPoints().size() - 1; // get index of array location latest points received of agent
+        double outcome = man.getPoints().get(idx); //save this point value
+        if (PRINT) System.out.println("reward:" + outcome);
+
+        //calculate max q value
+        if (man.getAlive()) {
+            ActivationVectorList secondpasslist = mlp.forwardPass(CompleteGame(), activationList); //do a forwardspass with the current gamestate and the network of this object. Save the result.
+            double[] secondpass = secondpasslist.getOutput(); // get the values of the output layer
+            double maxOutcome = Double.NEGATIVE_INFINITY;
+            for (int moveidx = 0; moveidx < secondpass.length; moveidx++) { // go through all output values
+                if (maxOutcome < secondpass[moveidx]) { //sets the value of the output node to negative infinity if it was somehow lower.
+                    maxOutcome = secondpass[moveidx];
+                }
+            }
+            if (PRINT) System.out.println("second pass:" + discount * maxOutcome);
+            outcome += discount * maxOutcome; //add the Q-value after compensating for the discount
+        }
+
+        targets[getLastMove()] = outcome; //change the target value of the last move made to the outcome
+
+        if (PRINT) System.out.println("outcome:" + outcome);
+        if (PRINT) System.out.println("output" + Arrays.toString(targets) + "\n\n");
+        error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
+        activationList = mlp.BackwardPass(activationList, targets); //update the weights using the new target
+        correctNetwork.setActivationList(activationList);
+
+        if (PRINT) System.out.println();
+
     }
 
-    TimeDrivenBoltzmanNNFullInput getCorrectNetworkForStrategy(){
-        if(SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES) { //global variable to decide if we use specialized networks for each amount of enemies
+    TimeDrivenBoltzmanNNFullInput getCorrectNetworkForStrategy() {
+        if (SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES) { //global variable to decide if we use specialized networks for each amount of enemies
             //switch to determine the use of the right network
             switch (currentStrategy) {
                 case 0:
-                    return this;
+                    return this.pathFindingNetwork;
                 case 1:
                     return this.oneEnemyNetwork;
                 case 2:
@@ -363,12 +400,11 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
                 case 3:
                     return this.threeEnemiesNetwork;
             }
-        }else{ //use only two networks: pathfinding and fight
-            if(currentStrategy > 0){
+        } else { //use only two networks: pathfinding and fight
+            if (currentStrategy > 0) {
                 return this.oneEnemyNetwork;
-            }
-            else{
-                return this;
+            } else {
+                return this.pathFindingNetwork;
             }
 
         }
