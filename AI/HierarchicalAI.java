@@ -17,7 +17,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
  */
 
 public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     WorldPosition targetPosition;
     //protected MLP mlp2;

@@ -25,7 +25,7 @@ public class Store {
         try {
             File f = new File(dir);
             f.mkdirs();
-            FileOutputStream stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".nn");
+            FileOutputStream stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".nn"); //filename is the generation number
             ObjectOutput s = new ObjectOutputStream(stream);
             s.writeObject(ai.getClass());
             s.writeObject(ai.getActivationVectorlist());

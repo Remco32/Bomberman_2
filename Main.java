@@ -20,9 +20,11 @@ public class Main {
     long startTimeTrials = System.currentTimeMillis();
     int currentEpoch;
     int currentGeneration;
-    static int AMOUNT_OF_EPOCHS = 5;
-    static int AMOUNT_OF_GENERATIONS = 5;
-    static int AMOUNT_OF_TESTS = 2;
+    //1000 games take about ~3 hours
+    static int AMOUNT_OF_EPOCHS = 300;
+    static int AMOUNT_OF_GENERATIONS = 10;
+    static int AMOUNT_OF_TESTS = 20;
+    static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
 
     public static void main(String[] args) {
         // parameters
@@ -83,6 +85,25 @@ public class Main {
         if(seconds == 0 && minutes == 0) timeLeft = timeLeft.concat("unknown");
 
         System.out.println(timeLeft);
+    }
+
+    void printTimeSpent() {
+        /**
+        long totalTimeElapsed = System.currentTimeMillis() - startTimeTrials;
+
+        int minutes = (int) (totalTimeElapsed / 1000 / 60);
+        int seconds = (int) (totalTimeElapsed / 1000 % 60);
+        int hours = minutes / 60;
+        minutes = minutes - hours * 60;
+
+        String timeSpent = "Time spent: ";
+        if (hours > 0) timeSpent = timeSpent.concat(hours + "h");
+        if (minutes > 0) timeSpent = timeSpent.concat(minutes + "m");
+        if (seconds > 0) timeSpent = timeSpent.concat(seconds + "s");
+        //if(seconds == 0 && minutes == 0) timeLeft = timeLeft.concat("unknown");
+
+        System.out.println(timeSpent);
+         **/
     }
 
     public void StartTraining(GameSettings gameSettings, ArrayList<NNSettings> NNSettingsList) {
@@ -148,12 +169,12 @@ public class Main {
                 //double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
                 //System.out.println("\rPercent done:" + procentDone);
                 //System.out.flush();
-                if (gen == gameSettings.getAmountOfGenerations() - 1) {
+                if ( SAVE_EVERY_GENERATION || (gen == gameSettings.getAmountOfGenerations() - 1)) {
                     for (int x = 0; x < NNSettingsList.size(); x++) {
                         NNSettings setting = NNSettingsList.get(x);
                         if (!setting.isLOADWEIGHTS() || setting.isSTOREDATA()) {
                             ai.get(x).getWinrate().remove(ai.get(x).getWinrate().size() - 1);
-                            new Store(ai.get(x));
+                            new Store(ai.get(x)); //save network
                         }
                     }
                 }
@@ -173,6 +194,8 @@ public class Main {
             }
             new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate);
         }
+
+        printTimeSpent();
 
         // calculate mean
         ArrayList<Double> meanWinrate = new ArrayList<>();
@@ -398,6 +421,8 @@ public class Main {
             createGUI();
             pack();
             setVisible(true);
+
+
         }
 
         void createGUI(){
@@ -409,6 +434,8 @@ public class Main {
                 }
             });
             setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+
 
             this.add(showWindow);
 
