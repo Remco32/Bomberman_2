@@ -64,7 +64,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         int move;
         int enemyCount;
 
-        enemyCount = targetEnemies.size();
+        enemyCount = targetEnemies.size(); //targetable enemies
 
         if (enemyCount > 0) { // Second strategy: Attacking
             if (DEBUG) System.out.println("Second strategy: Attacking. Amount of targets: " + enemyCount);

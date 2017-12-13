@@ -20,11 +20,15 @@ public class Main {
     long startTimeTrials = System.currentTimeMillis();
     int currentEpoch;
     int currentGeneration;
+
+    /** Parameters **/
     //1000 games take about ~3 hours
-    static int AMOUNT_OF_EPOCHS = 300;
-    static int AMOUNT_OF_GENERATIONS = 10;
-    static int AMOUNT_OF_TESTS = 20;
-    static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
+    static int AMOUNT_OF_EPOCHS = 2;
+    static int AMOUNT_OF_GENERATIONS = 2;
+    static int AMOUNT_OF_TESTS = 2;
+    static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
+    static boolean SELECT_NETWORK_TO_LOAD = true;
+    static boolean STOREDATA = false;
 
     public static void main(String[] args) {
         // parameters
@@ -38,8 +42,8 @@ public class Main {
         nn1.setTypeNetwork(NNSettings.HIERARCHICAL);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(0.3);
-        nn1.setLOADWEIGHTS(false);
-        nn1.setSTOREDATA(true);
+        nn1.setLOADWEIGHTS(SELECT_NETWORK_TO_LOAD);
+        nn1.setSTOREDATA(STOREDATA);
 
 
 //        NNSettings nn2 = new NNSettings();

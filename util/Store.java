@@ -25,14 +25,16 @@ public class Store {
         try {
             File f = new File(dir);
             f.mkdirs();
+            //stores class itself + its neural net
             FileOutputStream stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".nn"); //filename is the generation number
             ObjectOutput s = new ObjectOutputStream(stream);
             s.writeObject(ai.getClass());
             s.writeObject(ai.getActivationVectorlist());
             s.close();
+            //Stores winrate, error, generationPoints
             stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".data");
             s = new ObjectOutputStream(stream);
-            s.writeObject(ai.getWinrate());
+            s.writeObject(ai.getWinrate()); //are all arrays, so multiple values
             s.writeObject(ai.getError());
             s.writeObject(ai.getGenerationPoints());
             s.close();

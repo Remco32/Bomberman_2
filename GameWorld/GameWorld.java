@@ -132,9 +132,12 @@ public class GameWorld {
                     explodedBombList.add(bomb);
                 }
             }
-            for (BomberMan man : bomberManList) man.loadBufferIntoPoints();
+            for (BomberMan man : bomberManList) man.loadBufferIntoPoints(); //add gained points
+
             for (Bomb bomb : explodedBombList) activeBombList.remove(bomb);
+
             for (AIHandler temp : localAIList) temp.UpdateWeights();
+
             //remove all dead ai's
             Iterator<AIHandler> i = localAIList.iterator();
             while (i.hasNext()) {

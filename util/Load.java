@@ -19,7 +19,7 @@ public class Load {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(chooser.getSelectedFile().getAbsolutePath()));
                 ois.readObject();
                 ActivationVectorList ai = (ActivationVectorList) ois.readObject();
-                return ai.getWeigths();
+                return ai.getWeigths(); //only returns the weights
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
