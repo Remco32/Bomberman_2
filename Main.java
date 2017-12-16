@@ -23,11 +23,11 @@ public class Main {
 
     /** Parameters **/
     //1000 games take about ~3 hours
-    static int AMOUNT_OF_EPOCHS = 2;
-    static int AMOUNT_OF_GENERATIONS = 2;
-    static int AMOUNT_OF_TESTS = 2;
+    static int AMOUNT_OF_EPOCHS = 1000;
+    static int AMOUNT_OF_GENERATIONS = 10;
+    static int AMOUNT_OF_TESTS = 5;
     static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
-    static boolean SELECT_NETWORK_TO_LOAD = true;
+    static boolean SELECT_NETWORK_TO_LOAD = false;
     static boolean STOREDATA = false;
 
     public static void main(String[] args) {

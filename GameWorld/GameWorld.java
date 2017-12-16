@@ -136,6 +136,8 @@ public class GameWorld {
 
             for (Bomb bomb : explodedBombList) activeBombList.remove(bomb);
 
+            for (BomberMan man : bomberManList) man.updateBombCooldown();
+
             for (AIHandler temp : localAIList) temp.UpdateWeights();
 
             //remove all dead ai's

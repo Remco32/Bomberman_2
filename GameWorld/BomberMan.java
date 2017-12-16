@@ -1,7 +1,5 @@
 package GameWorld;
 
-import GameWorld.GameWorld;
-
 import java.util.ArrayList;
 
 /**
@@ -16,6 +14,8 @@ public class BomberMan {
     private Boolean alive;
     private GameWorld world;
     static int MOVECOST = -1;
+    int bombCooldown = 0;
+    static int MAXBOMBCOOLDOWN = 5;
 
     //private int deathCost = -300; //still to be implemented
     private int killReward = 100;
@@ -42,11 +42,18 @@ public class BomberMan {
 
         if (type == 5) { //place bomb
        //     System.out.println("player " + this.id + " placed a bomb");
-            if (world.positions[x_location][y_location].bomb == null) {
+            if (world.positions[x_location][y_location].bomb == null && bombCooldown == 0) {
                 Bomb bomb = new Bomb(x_location, y_location, this, world);
                 world.activeBombList.add(bomb);
                 world.positions[x_location][y_location].add_Bomb(bomb);
+                bombCooldown = MAXBOMBCOOLDOWN;
             } //else System.out.println("Bomb has already been placed at this location");
+        }
+    }
+
+    public void updateBombCooldown(){
+        if(bombCooldown > 0){
+            bombCooldown--;
         }
     }
 

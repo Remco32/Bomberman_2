@@ -1,6 +1,7 @@
 package util;
 
 import AI.AIHandler;
+import AI.HierarchicalAI;
 import MLP.ActivationVectorList;
 
 import javax.swing.*;

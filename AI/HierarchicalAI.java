@@ -18,6 +18,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
 
 public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     private boolean DEBUG = false;
+    private boolean DEBUG_ENEMYCOUNT = true;
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     WorldPosition targetPosition;
     //protected MLP mlp2;
@@ -56,9 +57,9 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         String name = "Hoi";
         activationList = new ActivationVectorList(initWeights, activationFunctionArrayList, name);
 
-        if (DEBUG) System.out.println("Using hierachical");
     }
 
+    //TODO check why bombs are able to be set when there's already one placed
     public void AddMoveToBuffer() {
         List targetEnemies = checkPathToEnemies();
         int move;
@@ -67,14 +68,14 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         enemyCount = targetEnemies.size(); //targetable enemies
 
         if (enemyCount > 0) { // Second strategy: Attacking
-            if (DEBUG) System.out.println("Second strategy: Attacking. Amount of targets: " + enemyCount);
+            if (DEBUG_ENEMYCOUNT) System.out.println("Second strategy: Attacking. Amount of targets: " + enemyCount);
             //change rewards to rewards for this strat
             currentStrategy = enemyCount;
             changeStrategyRewards(2); //Rewards for attacking strat
             move = calculateMove();
 
         } else {
-            if (DEBUG) System.out.println("First strategy: Pathfinding");
+            if (DEBUG_ENEMYCOUNT) System.out.println("First strategy: Pathfinding");
             //change rewards to rewards for this strat
             currentStrategy = enemyCount;
             changeStrategyRewards(1); //Rewards for pathfinding strat
@@ -177,7 +178,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
      }
      **/
 
-    //TODO AStar doesn't work perfectly all the time. Sometimes accessible enemies are not detected.
+    //TODO AStar doesn't work perfectly all the time. Sometimes multiple accessible enemies are not detected. Might have something to do with the distance of the undetected enemy.
     //One issue is that enemies move during the pathfinding. This means a path can be found to an old location with no enemy on it anymore.
     //Receives the position of an enemy as argument.
     int aStar(WorldPosition targetPosition) { //returns ID of enemy to which a path is found
@@ -199,7 +200,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         addSurroundingLocations(openList, world.getPositions(man.getX_location(), man.getY_location())); //addSurroundingLocations() doesn't add locations that are inaccessible
 
         if(openList.isEmpty()){
-            return -3; //something went wrong with the open list
+            return -3; //something went wrong with the open list //doesnt seem to occur anymore. Leaving it in just in case...
         }
 
         WorldPosition positionConsidering = openList.get(0); //take first item
