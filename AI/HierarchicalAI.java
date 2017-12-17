@@ -18,7 +18,8 @@ import static org.apache.commons.math3.util.FastMath.abs;
 
 public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     private boolean DEBUG = false;
-    private boolean DEBUG_ENEMYCOUNT = true;
+    private boolean DEBUG_PRINT_ENEMYCOUNT = true;
+    private boolean DEBUG_PRINT_FOUND_PATH = false;
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     WorldPosition targetPosition;
     //protected MLP mlp2;
@@ -59,25 +60,25 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     }
 
-    //TODO check why bombs are able to be set when there's already one placed
     public void AddMoveToBuffer() {
-        List targetEnemies = checkPathToEnemies();
         int move;
-        int enemyCount;
+        int targetableEnemyCount;
 
-        enemyCount = targetEnemies.size(); //targetable enemies
+        List targetEnemies = checkPathToEnemies();
+        targetableEnemyCount = targetEnemies.size(); //targetable enemies
 
-        if (enemyCount > 0) { // Second strategy: Attacking
-            if (DEBUG_ENEMYCOUNT) System.out.println("Second strategy: Attacking. Amount of targets: " + enemyCount);
+        if (targetableEnemyCount > 0) { // Second strategy: Attacking
+            if (DEBUG_PRINT_ENEMYCOUNT) System.out.println("Second strategy: Attacking. Amount of targets: " + targetableEnemyCount);
+            if (DEBUG_PRINT_ENEMYCOUNT) System.out.println("Enemies alive: " + (world.getAmountOfAlivePlayers()-1));
             //change rewards to rewards for this strat
-            currentStrategy = enemyCount;
+            currentStrategy = targetableEnemyCount;
             changeStrategyRewards(2); //Rewards for attacking strat
             move = calculateMove();
 
         } else {
-            if (DEBUG_ENEMYCOUNT) System.out.println("First strategy: Pathfinding");
+            if (DEBUG) System.out.println("First strategy: Pathfinding");
             //change rewards to rewards for this strat
-            currentStrategy = enemyCount;
+            currentStrategy = targetableEnemyCount;
             changeStrategyRewards(1); //Rewards for pathfinding strat
             move = calculateMove();
 
@@ -135,23 +136,29 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
         //go through all enemies
         for (int x = 1; x < listOfEnemies.size(); x++) { //offset by one so our own agent is ignored
-            //get the X and Y of the enemy
-            WorldPosition enemyLocation = world.getPositions(listOfEnemies.get(x).getMan().getX_location(), listOfEnemies.get(x).getMan().getY_location());
+            //don't  look for dead enemies
+            if(listOfEnemies.get(x).man.getAlive()) {
 
-            //search for paths using aStar
-            returnList.add(aStar(enemyLocation));
-            //list can contain negative values that have to be filtered
+                //get the X and Y of the enemy
+                WorldPosition enemyLocation = world.getPositions(listOfEnemies.get(x).getMan().getX_location(), listOfEnemies.get(x).getMan().getY_location());
+
+                //search for paths using aStar
+                returnList.add(aStar(enemyLocation));
+                //list can contain negative values that have to be filtered
+            }
         }
 
+        /**
         //filter duplicates
         Set<Integer> hashSet = new HashSet<>();
         hashSet.addAll(returnList); //add all to the hashset
         returnList.clear(); //empty the returnlist
         returnList.addAll(hashSet); //fill it again, now without any duplicates
+         **/
 
         //go through the list to see if -2 is returned for some of the agents, remove those elements from the list
         for(int i = 0; i < returnList.size(); i++ ){
-            if(returnList.get(i) < 0){
+            if(returnList.get(i) < -1){
                 returnList.remove(i);
                 i--; // to offset the fact that the list is now one element shorter
             }
@@ -179,84 +186,152 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
      **/
 
     //TODO AStar doesn't work perfectly all the time. Sometimes multiple accessible enemies are not detected. Might have something to do with the distance of the undetected enemy.
+    //TODO accept a list of locations instead of a single one
     //One issue is that enemies move during the pathfinding. This means a path can be found to an old location with no enemy on it anymore.
+    //This isn't really a concern: if there was a path to a certain enemy, it will remain for the rest of the game
     //Receives the position of an enemy as argument.
     int aStar(WorldPosition targetPosition) { //returns ID of enemy to which a path is found
+
+
+
         this.targetPosition = targetPosition;
-        int targetID;
+        /** int targetID; **/
+        boolean skipSuccessor = false;
+
+        /**
         if (targetPosition.getBombermanList().isEmpty()) {
-            targetID = -1; //position given has no enemy at this point
+            targetID = -1; //position given has no enemy anymore at this point
         } else {
             targetID = targetPosition.getBombermanList().get(0).getId(); //get the ID of the enemy we are finding a path to
         }
-        WorldPosition previousPosition = world.getPositions(man.getX_location(), man.getY_location()); // set our startingposition as the previous position. This object is used to compare pathlenghts.
-        calculateAndSetPathscore(previousPosition); //set its score, which should be 0
+         **/
+
 
         ArrayList<WorldPosition> openList = new ArrayList<>(); //locations that are being considered
         ArrayList<WorldPosition> closedList = new ArrayList<>(); //locations that do not have to be considered
 
+        WorldPosition startingPosition = world.getPositions(man.getX_location(), man.getY_location()); // set our startingposition. This object is used to compare pathlenghts.
+        //calculateAndSetPathscore(startingPosition); //set its score, which should be 0
+        startingPosition.setPathScore(0);
+        //add our starting position to the open list
+        openList.add(startingPosition);
+
+
+        /**
         //add possible locations around agent to the openlist
-
         addSurroundingLocations(openList, world.getPositions(man.getX_location(), man.getY_location())); //addSurroundingLocations() doesn't add locations that are inaccessible
+         **/
 
-        if(openList.isEmpty()){
+        /**
+        if (openList.isEmpty()) {
             return -3; //something went wrong with the open list //doesnt seem to occur anymore. Leaving it in just in case...
         }
+         **/
 
+        /**
         WorldPosition positionConsidering = openList.get(0); //take first item
-
+**/
 
         //loop until we found our targetPosition, our until we run out of positions in the openlist
         while (!openList.isEmpty()) {
-            if (targetPosition.getX_location() == positionConsidering.getX_location() && targetPosition.getY_location() == positionConsidering.getY_location()) {
-                if (DEBUG)
-                    System.out.println("Path from " + man.getX_location() + "," + man.getY_location() + " to " + targetPosition.getX_location() + "," + targetPosition.getY_location() + " (enemy " + targetID + ")");
-                return targetID;
-            }
 
             //Sort the resulting list from lowest pathscore to highest
             sortListByPathScore(openList);
 
             //take first object in the open list and move it to the closed list
-            positionConsidering = openList.get(0); //take first item
+            WorldPosition positionConsidering = openList.get(0); //take first item
             openList.remove(0); //remove it
-            closedList.add(positionConsidering); // add to closed list
 
-            ArrayList<WorldPosition> tempList = new ArrayList<>(); //locations that are adjacent to current position
-            addSurroundingLocations(tempList, positionConsidering);
+            ArrayList<WorldPosition> consideringSuccessorsList = new ArrayList<>(); //for locations that are adjacent to current position
+            addSurroundingLocations(consideringSuccessorsList, positionConsidering); //fills the first argument (arraylist) with possible locations around the second argument.
 
-            //Process all new positions
-            while (!tempList.isEmpty()) {
-                WorldPosition tempPosition = tempList.get(0); // get first element of list
-                tempList.remove(0); //remove it
+            //Process all successor positions
+            for(WorldPosition successorPositionConsidering : consideringSuccessorsList ) {
 
-                if (closedList.contains(tempPosition)) {
-                    break; //ignore positions that are in the closed list
-                }
+                //reset boolean for skipping current successor
+                skipSuccessor = false;
 
-                if (!openList.contains(tempPosition)) { //not in the open list
-                    //calculate pathScore
-                    calculateAndSetPathscore(tempPosition);
-                    openList.add(tempPosition); //add location to open list
-                }
 
-                if (openList.contains(tempPosition)) { //in open list
-                    //Check if the pathscore is lower when we use the current generated path to get there.
-                    if (tempPosition.getPathScore() < previousPosition.getPathScore()) {
-                        //update its score and update its parent as well.
-                        calculateAndSetPathscore(tempPosition);
-                        calculateAndSetPathscore(previousPosition);
-
+                //x and y coordinates correspond to each other, we found our target.
+                if (targetPosition.getX_location() == successorPositionConsidering.getX_location() && targetPosition.getY_location() == successorPositionConsidering.getY_location()) {
+                    if (DEBUG_PRINT_FOUND_PATH) {
+                        System.out.println("Path from " + man.getX_location() + "," + man.getY_location() +
+                                " to " + targetPosition.getX_location() + "," + targetPosition.getY_location() + " (enemy " +  ")");
                     }
-
+                    return 1; //found the target
                 }
 
-                //set previous considered position to variable
-                previousPosition = tempPosition;
+                //update pathscores
+                calculateAndSetPathscore(successorPositionConsidering, positionConsidering);
 
+                /**
+                 if (closedList.contains(successorPositionConsidering)) {
+                 break; //ignore positions that are in the closed list //TODO
+                 }
+                 **/
+
+                /**
+                 if (!openList.contains(successorPositionConsidering)) { //not in the open list
+                 //calculate pathScore
+                 calculateAndSetPathscore(successorPositionConsidering);
+                 openList.add(successorPositionConsidering); //add location to open list
+                 }
+                 **/
+
+                //check if this node is already in the open list
+                for (WorldPosition position : openList) {
+                    //check if already in the list
+                    if (position.getX_location() == successorPositionConsidering.getX_location() && position.getY_location() == successorPositionConsidering.getY_location()) {
+                        //Pathscore of position already in the list is better
+                        if (position.getPathScore() <= successorPositionConsidering.getPathScore()) {
+                            skipSuccessor = true;
+                        }
+                    }
+                }
+
+                //check if this node is already in the closed list
+                for (WorldPosition position : closedList) {
+                    //check if already in the list
+                    if (position.getX_location() == successorPositionConsidering.getX_location() && position.getY_location() == successorPositionConsidering.getY_location()) {
+                        //Pathscore of position already in the list is better
+                        if (position.getPathScore() <= successorPositionConsidering.getPathScore()) {
+                            skipSuccessor = true;
+
+                        }
+                    }
+                }
+
+                //Add position to open list, if position is not being skipped
+                if (!skipSuccessor) {
+                    openList.add(successorPositionConsidering);
+                }
+
+                /**
+                 if (openList.contains(successorPositionConsidering)) { //already in open list
+                 //node already in the openList has a lower pathscore
+                     if (previousPosition.getPathScore() < successorPositionConsidering.getPathScore() ) {
+                     //update its score and update its parent as well.
+                     calculateAndSetPathscore(successorPositionConsidering);
+                     calculateAndSetPathscore(previousPosition);
+
+                     }
+
+                     }
+                     **/
+
+                    /**
+                     //set previous considered position to variable
+                     previousPosition = tempPosition;
+                     **/
+
+
+
+                }
+            closedList.add(positionConsidering); // add to closed list
             }
 
-        }
+
+
 
         // if (DEBUG) System.out.println("Processed all positions.");
         return -2; //case of no enemy
@@ -324,9 +399,15 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     }
 
-    void calculateAndSetPathscore(WorldPosition position) {
+    void calculateAndSetPathscore(WorldPosition position, WorldPosition parent) {
+        /**
         //Add pathscore from startingposition to manhattan distance
         position.setPathScore(position.getPathScoreFromStartposition() + cityblockDistance(position, targetPosition));
+         **/
+
+        position.movementCostSoFor = parent.movementCostSoFor + cityblockDistance(position, parent);
+        position.estimationRemainingPathscore = cityblockDistance(position, targetPosition);
+        position.setPathScore(position.movementCostSoFor + position.estimationRemainingPathscore);
 
     }
 

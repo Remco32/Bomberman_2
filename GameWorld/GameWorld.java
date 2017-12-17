@@ -252,4 +252,12 @@ public class GameWorld {
     public int getWin() {
         return win;
     }
+
+    public int getAmountOfAlivePlayers(){
+        int count = 0;
+        for (int x = 0; x < bomberManList.size(); x++) {
+            if (bomberManList.get(x).getAlive()) count++;
+        }
+        return count;
+    }
 }

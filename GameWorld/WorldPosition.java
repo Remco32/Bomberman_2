@@ -17,6 +17,12 @@ public class WorldPosition {
     private int y_location;
     protected int type; //0=hardwall,1=softwall,2=no wall
 
+    // for A* algorithm
+    public int movementCostSoFor = 0; //g
+    public int estimationRemainingPathscore = 0; //h
+    private int pathScore = 0;  //f
+    private int pathScoreFromStartposition = 0;
+
     public ArrayList<BomberMan> getBombermanList() {
         return bombermanList;
     }
@@ -37,8 +43,7 @@ public class WorldPosition {
         return type;
     }
 
-    private int pathScore = 0; // for A* algorithm
-    private int pathScoreFromStartposition = 0;
+
 
     WorldPosition(int x, int y, int type) {
         this.x_location = x;
