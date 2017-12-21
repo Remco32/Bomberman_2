@@ -23,9 +23,9 @@ public class Main {
 
     /** Parameters **/
     //1000 games take about ~3 hours
-    static int AMOUNT_OF_EPOCHS = 10;
+    static int AMOUNT_OF_EPOCHS = 1;
     static int AMOUNT_OF_GENERATIONS = 3;
-    static int AMOUNT_OF_TESTS = 5;
+    static int AMOUNT_OF_TESTS = 2;
     static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
     static boolean SELECT_NETWORK_TO_LOAD = false;
     static boolean STOREDATA = false;
@@ -92,7 +92,7 @@ public class Main {
     }
 
     void printTimeSpent() {
-        /**
+
         long totalTimeElapsed = System.currentTimeMillis() - startTimeTrials;
 
         int minutes = (int) (totalTimeElapsed / 1000 / 60);
@@ -107,7 +107,7 @@ public class Main {
         //if(seconds == 0 && minutes == 0) timeLeft = timeLeft.concat("unknown");
 
         System.out.println(timeSpent);
-         **/
+
     }
 
     public void StartTraining(GameSettings gameSettings, ArrayList<NNSettings> NNSettingsList) {

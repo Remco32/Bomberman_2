@@ -61,7 +61,7 @@ public class TimeDrivenBoltzmanNNFullInput extends AIHandler{
         //create the activation vectorList (contains activation of every row, the weights, and the used functions
         activationList = new ActivationVectorList(initWeights, activationFunctionArrayList);
 
-        SimpleDateFormat dtf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dtf = new SimpleDateFormat("yyyy-MM-dd HH mm ss");
         Date localDate = new Date();
         tostring = dtf.format(localDate) + Arrays.toString(setting.getWeigths()) +", " + this.getClass() +  ", man"+ manIndex +"activation functions" + Arrays.toString(setting.getFunctions()) +"size" +getGenerationSize() + "," + getEpochSize()+"learningrate" + learningRate +", exploration" + explorationChance;
 

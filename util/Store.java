@@ -1,6 +1,7 @@
 package util;
 
 import AI.AIHandler;
+import AI.HierarchicalAI;
 import AI.NeuralNetworkAIFullInput;
 
 import javax.imageio.ImageIO;
@@ -8,8 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by joseph on 10/04/2017.
@@ -18,25 +21,49 @@ public class Store {
     private static String OS =null;
     String dir = System.getProperty("user.dir");
 
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    String str = sdf.format(new Date());
+
+
+
 
     public Store(AIHandler ai) {
 
         if(OS==null) OS = System.getProperty("os.name").toLowerCase();
         if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
         if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
-        String timestamp = Instant.now().toString();
-        timestamp = timestamp.replace(":", "-");
-        dir = dir.concat(" ");
-        dir = dir.concat(timestamp);
+
+        /**
+         String timestamp = Instant.now().toString();
+         timestamp = timestamp.replace(":", "-");
+         dir = dir.concat(" ");
+         dir = dir.concat(timestamp);
+         */
+
         try {
             File f = new File(dir);
             f.mkdirs();
-            //stores class itself + its neural net
+
             FileOutputStream stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".nn"); //filename is the generation number
             ObjectOutput s = new ObjectOutputStream(stream);
-            s.writeObject(ai.getClass());
-            s.writeObject(ai.getActivationVectorlist());
-            s.close();
+
+            //in case of having to save multiple networks
+            if(ai.toString().contains("Hierarchical")){
+                ArrayList list = ((HierarchicalAI)ai).getAllNetworks();
+
+                for(int i = 0; i < list.size(); i++ ){
+                    s.writeObject(i);
+                }
+
+            }else {//single network case
+
+                //stores its neural net
+
+                s.writeObject(ai.getClass());
+                s.writeObject(ai.getActivationVectorlist());
+
+                s.close();
+            }
             //Stores winrate, error, generationPoints
             stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".data");
             s = new ObjectOutputStream(stream);
@@ -96,10 +123,6 @@ public class Store {
         if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
         if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
 
-        String timestamp = Instant.now().toString();
-        timestamp = timestamp.replace(":", "-");
-        dir = dir.concat(" ");
-        dir = dir.concat(timestamp);
 
         try {
             File f = new File(dir);
@@ -135,6 +158,8 @@ public class Store {
         if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
         if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
 
+
+
         try {
             File f = new File(dir);
             f.mkdirs();
@@ -159,6 +184,7 @@ public class Store {
         if(OS==null) OS = System.getProperty("os.name").toLowerCase();
         if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + title + "\\";
         if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + title + "/";
+
 
         Container c = frame.getContentPane();
         BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);

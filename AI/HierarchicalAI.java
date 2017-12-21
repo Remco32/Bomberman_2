@@ -416,6 +416,17 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
         return currentStrategy;
     }
 
+    public ArrayList<TimeDrivenBoltzmanNNFullInput> getAllNetworks(){
+
+        ArrayList<TimeDrivenBoltzmanNNFullInput> returnList = new ArrayList<>() ;
+        returnList.add(pathFindingNetwork);
+        returnList.add(oneEnemyNetwork);
+        returnList.add(twoEnemiesNetwork);
+        returnList.add(threeEnemiesNetwork);
+
+        return returnList;
+    }
+
 /**
     public ActivationVectorList CalculateBestMove(MLP mlp) {
         activationList = mlp.forwardPass(CompleteGame(), activationList);
