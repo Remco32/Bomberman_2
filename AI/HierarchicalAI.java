@@ -426,7 +426,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
 
     public void UpdateWeights(){
 
-        ActivationVectorList activationList;
+        //ActivationVectorList activationList;
         //select correct network
         TimeDrivenBoltzmanNNFullInput correctNetwork = getCorrectNetworkForStrategy();
         activationList = correctNetwork.getActivationList(); //get the network of the right strategy

@@ -23,8 +23,8 @@ public class Main {
 
     /** Parameters **/
     //1000 games take about ~3 hours
-    static int AMOUNT_OF_EPOCHS = 1000;
-    static int AMOUNT_OF_GENERATIONS = 10;
+    static int AMOUNT_OF_EPOCHS = 10;
+    static int AMOUNT_OF_GENERATIONS = 3;
     static int AMOUNT_OF_TESTS = 5;
     static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
     static boolean SELECT_NETWORK_TO_LOAD = false;
@@ -254,6 +254,9 @@ public class Main {
             new GraphError(stdDevError, "StdDev Error of", params, 0);
             new GraphError(stdDevPoints, "StdDev points", params, 0);
         }
+
+        //Close program
+        System.exit(0);
     }
 
 
@@ -414,6 +417,7 @@ public class Main {
             new GraphError(stdDevPoints, "StdDev points", params, 0);
         }
 
+        //TODO close program
     }
 
 
