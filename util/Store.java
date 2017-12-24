@@ -3,6 +3,7 @@ package util;
 import AI.AIHandler;
 import AI.HierarchicalAI;
 import AI.NeuralNetworkAIFullInput;
+import AI.TimeDrivenBoltzmanNNFullInput;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -49,10 +50,33 @@ public class Store {
 
             //in case of having to save multiple networks
             if(ai.toString().contains("Hierarchical")){
+                /**
                 ArrayList list = ((HierarchicalAI)ai).getAllNetworks();
 
                 for(int i = 0; i < list.size(); i++ ){
                     s.writeObject(i);
+                }
+                 **/
+                ArrayList<TimeDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAI)ai).getAllNetworks();
+                for (int i = 0; i < 4; i++) {
+                    try {
+                        FileOutputStream fo = new FileOutputStream(new File(dir + "NeuralNetwork" + i + ".nn"));
+                        ObjectOutputStream o = new ObjectOutputStream(fo);
+
+                        // Write objects to file
+                        TimeDrivenBoltzmanNNFullInput network = neuralNetList.get(i);
+                        o.writeObject(network.getActivationList());
+
+                        o.close();
+                        fo.close();
+
+                    } catch (FileNotFoundException e) {
+                        System.out.println("File not found");
+                    } catch (IOException e) {
+                        System.out.println("Error initializing stream");
+                        System.err.println(e);
+
+                    }
                 }
 
             }else {//single network case
@@ -141,6 +165,12 @@ public class Store {
             out.println(toCSV(error));
             out.print("Mean Points: ");
             out.println(toCSV(points));
+            /**
+            if(ai.toString().contains("Hierarchical")) {
+                out.println(ai.
+            }
+             **/
+
             out.close();
 
 

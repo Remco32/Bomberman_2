@@ -5,6 +5,7 @@ import MLP.AbstractActivationFunction;
 import util.GameSettings;
 import util.NNSettings;
 
+import java.io.Serializable;
 import java.util.*;
 
 import MLP.ActivationVectorList;
@@ -16,7 +17,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
+public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
@@ -24,10 +25,10 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput {
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
     WorldPosition targetPosition;
     //protected MLP mlp2;
-    TimeDrivenBoltzmanNNFullInput pathFindingNetwork;
-    TimeDrivenBoltzmanNNFullInput oneEnemyNetwork;
-    TimeDrivenBoltzmanNNFullInput twoEnemiesNetwork;
-    TimeDrivenBoltzmanNNFullInput threeEnemiesNetwork;
+    public TimeDrivenBoltzmanNNFullInput pathFindingNetwork;
+    public TimeDrivenBoltzmanNNFullInput oneEnemyNetwork;
+    public TimeDrivenBoltzmanNNFullInput twoEnemiesNetwork;
+    public TimeDrivenBoltzmanNNFullInput threeEnemiesNetwork;
 
     private int currentStrategy = 0; //0 = pathfinding, 1 = one enemy, etc
 

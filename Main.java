@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by joseph on 25/03/2017.
@@ -24,11 +25,13 @@ public class Main {
     /** Parameters **/
     //1000 games take about ~3 hours
     static int AMOUNT_OF_EPOCHS = 1;
-    static int AMOUNT_OF_GENERATIONS = 3;
     static int AMOUNT_OF_TESTS = 2;
-    static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
-    static boolean SELECT_NETWORK_TO_LOAD = false;
-    static boolean STOREDATA = false;
+    static int AMOUNT_OF_GENERATIONS = 1;
+
+    static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
+    static boolean SELECT_NETWORK_TO_LOAD = true;
+    static boolean STOREDATA = true;
+    static boolean LOAD_HIERARHCIAL = true;
 
     public static void main(String[] args) {
         // parameters
@@ -94,11 +97,15 @@ public class Main {
     void printTimeSpent() {
 
         long totalTimeElapsed = System.currentTimeMillis() - startTimeTrials;
+        int totalGames = AMOUNT_OF_EPOCHS+AMOUNT_OF_TESTS*AMOUNT_OF_GENERATIONS;
+
 
         int minutes = (int) (totalTimeElapsed / 1000 / 60);
         int seconds = (int) (totalTimeElapsed / 1000 % 60);
         int hours = minutes / 60;
         minutes = minutes - hours * 60;
+
+
 
         String timeSpent = "Time spent: ";
         if (hours > 0) timeSpent = timeSpent.concat(hours + "h");
@@ -106,8 +113,10 @@ public class Main {
         if (seconds > 0) timeSpent = timeSpent.concat(seconds + "s");
         //if(seconds == 0 && minutes == 0) timeLeft = timeLeft.concat("unknown");
 
-        System.out.println(timeSpent);
 
+        System.out.println();
+        System.out.println("Finished. " + timeSpent + " on "
+                + totalGames + " games.");
     }
 
     public void StartTraining(GameSettings gameSettings, ArrayList<NNSettings> NNSettingsList) {
@@ -310,10 +319,18 @@ public class Main {
             nn.setGenerationSize(gSet.getAmountOfGenerations());
             nn.setEpochSize(gSet.getAmountOfEpochs());
             //System.out.println("Created neural net for player " + idx);
-            if (setting.isLOADWEIGHTS()) {
+            if (setting.isLOADWEIGHTS() && !LOAD_HIERARHCIAL) {
             nn.getActivationVectorlist().setWeigths(new Load().Load());
             nn.setLearningRate(0);
 
+            }
+            if (setting.isLOADWEIGHTS() && LOAD_HIERARHCIAL) {
+                System.out.println("Select each hiearchical network in order.");
+
+                //((HierarchicalAI)nn).pathFindingNetwork.activationList = new Load().loadHierarchical();
+                ((HierarchicalAI)nn).oneEnemyNetwork = new Load().loadHierarchical();
+                ((HierarchicalAI)nn).twoEnemiesNetwork = new Load().loadHierarchical();
+                ((HierarchicalAI)nn).threeEnemiesNetwork = new Load().loadHierarchical();
             }
 
         }
