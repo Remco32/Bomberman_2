@@ -26,7 +26,7 @@ public class Main {
     //1000 games take about ~3 hours
     static int AMOUNT_OF_EPOCHS = 1;
     static int AMOUNT_OF_TESTS = 2;
-    static int AMOUNT_OF_GENERATIONS = 3;
+    static int AMOUNT_OF_GENERATIONS = 5;
 
     static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
     static boolean STOREDATA = true;
@@ -191,21 +191,21 @@ public class Main {
                             new Store(ai.get(x)); //save network
                         }
                     }
-/**
-                    //store in arraylists
+
                     accumulateWinrate.add(new ArrayList<Double>());
                     accumulateError.add(new ArrayList<Double>());
                     accumulatePoints.add(new ArrayList<Double>());
-                    for (int x = 0; x < currentGeneration; x++) {
+                    for (int x = 0; x <= currentGeneration; x++) {
                         AIHandler temp = ai.get(0);
-                        accumulateWinrate.add(new ArrayList<Double>());
-
                         accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                         accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                         accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
                     }
-                    new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate);
-**/
+                    new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well
+                    accumulateWinrate.clear();
+                    accumulateError.clear();
+                    accumulatePoints.clear();
+
                 }
                 printTimeRemaining();
 
@@ -222,7 +222,7 @@ public class Main {
                 accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                 accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
             }
-            new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate);
+            new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well
         }
 
         printTimeSpent();
