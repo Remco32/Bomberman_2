@@ -26,12 +26,13 @@ public class Main {
     //1000 games take about ~3 hours
     static int AMOUNT_OF_EPOCHS = 1;
     static int AMOUNT_OF_TESTS = 2;
-    static int AMOUNT_OF_GENERATIONS = 1;
+    static int AMOUNT_OF_GENERATIONS = 3;
 
     static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
-    static boolean SELECT_NETWORK_TO_LOAD = true;
     static boolean STOREDATA = true;
+
     static boolean LOAD_HIERARHCIAL = true;
+    static boolean SELECT_NETWORK_TO_LOAD = false;
 
     public static void main(String[] args) {
         // parameters
@@ -186,12 +187,30 @@ public class Main {
                     for (int x = 0; x < NNSettingsList.size(); x++) {
                         NNSettings setting = NNSettingsList.get(x);
                         if (!setting.isLOADWEIGHTS() || setting.isSTOREDATA()) {
-                            ai.get(x).getWinrate().remove(ai.get(x).getWinrate().size() - 1);
+                            //ai.get(x).getWinrate().remove(ai.get(x).getWinrate().size() - 1);
                             new Store(ai.get(x)); //save network
                         }
                     }
+/**
+                    //store in arraylists
+                    accumulateWinrate.add(new ArrayList<Double>());
+                    accumulateError.add(new ArrayList<Double>());
+                    accumulatePoints.add(new ArrayList<Double>());
+                    for (int x = 0; x < currentGeneration; x++) {
+                        AIHandler temp = ai.get(0);
+                        accumulateWinrate.add(new ArrayList<Double>());
+
+                        accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
+                        accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
+                        accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
+                    }
+                    new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate);
+**/
                 }
                 printTimeRemaining();
+
+
+
             }
             //store in arraylists
             accumulateWinrate.add(new ArrayList<Double>());
@@ -199,8 +218,6 @@ public class Main {
             accumulatePoints.add(new ArrayList<Double>());
             for (int x = 0; x < gameSettings.getAmountOfGenerations(); x++) {
                 AIHandler temp = ai.get(0);
-                accumulateWinrate.add(new ArrayList<Double>());
-
                 accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                 accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                 accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
