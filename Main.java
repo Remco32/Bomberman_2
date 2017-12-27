@@ -1,5 +1,7 @@
 import AI.*;
-import GameWorld.*;
+import GameWorld.Bomb;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
 import Graphics.GraphError;
 import MLP.MLP;
 import util.GameSettings;
@@ -11,7 +13,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by joseph on 25/03/2017.
@@ -23,15 +24,20 @@ public class Main {
     int currentGeneration;
 
     /** Parameters **/
-    //1000 games take about ~3 hours
-    static int AMOUNT_OF_EPOCHS = 1;
-    static int AMOUNT_OF_TESTS = 2;
-    static int AMOUNT_OF_GENERATIONS = 5;
+    static int AMOUNT_OF_EPOCHS = 10000;
+    static int AMOUNT_OF_TESTS = 100;
+    static int AMOUNT_OF_GENERATIONS = 100;
 
+    //10000 trials take ~12 minutes with round_time 10.
+    static int ROUND_TIME = 10; // time for a single gamestep in ms, default was 200
+
+    static boolean FIND_MINIMUM_ROUND_TIME = false; //decreases the roundtime by 1 ms every generation. Should eventually crash the program.
+
+    /** SAVING **/
     static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
     static boolean STOREDATA = true;
-
-    static boolean LOAD_HIERARHCIAL = true;
+    /** LOADING **/
+    static boolean LOAD_HIERARHCIAL = false;
     static boolean SELECT_NETWORK_TO_LOAD = false;
 
     public static void main(String[] args) {
@@ -62,11 +68,14 @@ public class Main {
         Gset.setAmountOfPlayers(4);
         Gset.setAcummulateTest(1);
 
+
+
         //System.out.println("Current time" + System.currentTimeMillis());
         main.StartTraining(Gset, nnSettingsArrayList);
 
 
     }
+
 
     void printTimeRemaining(){
         double estimatedTimeLeft = 0;
@@ -129,6 +138,8 @@ public class Main {
 
         //create world and ai's
         GameWorld world = new GameWorld(gameSettings.getWorldSize(), gameSettings.getAmountOfPlayers(), gameSettings.isShowWindow());
+
+
         ArrayList<AIHandler> ai = new ArrayList<AIHandler>();
         ShowWindow window = new ShowWindow(world);
 
@@ -149,10 +160,18 @@ public class Main {
                 ai.add(CreateNN(setting, gameSettings, world, x));
             }
             world.SetAi(ai);
+            world.setRoundTime(ROUND_TIME);
+            //new Store(ai.get(0), ROUND_TIME);
 
             // start training
             for (int gen = 0; gen < gameSettings.getAmountOfGenerations(); gen++) {
                 this.currentGeneration = gen;
+
+                if(FIND_MINIMUM_ROUND_TIME){
+                    world.setRoundTime(world.getRoundtime()-1); //decrease by one
+                    System.out.println("Roundtime set to " + world.getRoundtime() + "ms");
+                }
+
                 //set the exploration chance
                 for (int x = 0; x < NNSettingsList.size(); x++)
                     ai.get(x).setExplorationChance(NNSettingsList.get(x).getExplorationRate());

@@ -1,8 +1,5 @@
 package GameWorld;
 
-import GameWorld.Bomb;
-import GameWorld.BomberMan;
-
 import java.util.ArrayList;
 
 /**

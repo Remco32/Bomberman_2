@@ -1,8 +1,5 @@
 package GameWorld;
 
-import GameWorld.GameWorld;
-import org.apache.commons.math3.analysis.function.Max;
-
 /**
  * Created by joseph on 09/02/2017.
  */

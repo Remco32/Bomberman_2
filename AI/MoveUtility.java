@@ -1,7 +1,5 @@
 package AI;
 
-import java.util.ArrayList;
-
 /**
  * Created by joseph on 17/02/2017.
  */

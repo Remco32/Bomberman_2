@@ -1,19 +1,17 @@
 package AI;
 
 
-import GameWorld.*;
+import GameWorld.Bomb;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
+import GameWorld.WorldPosition;
 import MLP.AbstractActivationFunction;
 import MLP.ActivationVectorList;
 import MLP.MLP;
 import util.NNSettings;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-
 import java.util.*;
-
-import static java.lang.Double.doubleToLongBits;
-import static java.lang.Double.max;
 
 /**
  * Created by Joseph on 6/8/2017.

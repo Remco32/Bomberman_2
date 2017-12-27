@@ -1,6 +1,8 @@
 package Graphics;
 
-import GameWorld.*;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
+import GameWorld.WorldPosition;
 
 import javax.swing.*;
 import java.awt.*;

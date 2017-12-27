@@ -1,7 +1,7 @@
 package GameWorld;
 
 import AI.AIHandler;
-import Graphics.*;
+import Graphics.GameWindow;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,6 +25,8 @@ public class GameWorld {
     protected ArrayList<Bomb> activeBombList;
     protected ArrayList<Bomb> explodedBombList;
     private int win = 0;
+
+    private int roundTime;
 
     public GameWorld(int gridSize, int amountOfPlayers, Boolean windowBool) {
         this.gridSize = gridSize;
@@ -156,7 +158,7 @@ public class GameWorld {
             amountOfRounds++;
             if (windowBool && !(window == null)) try {
                 window.repaint();
-                Thread.sleep(200);
+                Thread.sleep(roundTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -259,5 +261,13 @@ public class GameWorld {
             if (bomberManList.get(x).getAlive()) count++;
         }
         return count;
+    }
+
+    public void setRoundTime(int time){
+        roundTime = time;
+    }
+
+    public int getRoundtime(){
+        return roundTime;
     }
 }

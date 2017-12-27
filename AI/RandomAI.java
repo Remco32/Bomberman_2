@@ -1,6 +1,8 @@
 package AI;
 
-import GameWorld.*;
+import GameWorld.Bomb;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
 
 import java.util.ArrayList;
 

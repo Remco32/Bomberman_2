@@ -2,7 +2,6 @@ package util;
 
 import AI.AIHandler;
 import AI.HierarchicalAI;
-import AI.NeuralNetworkAIFullInput;
 import AI.TimeDrivenBoltzmanNNFullInput;
 
 import javax.imageio.ImageIO;
@@ -11,7 +10,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -19,20 +17,18 @@ import java.util.Date;
  * Created by joseph on 10/04/2017.
  */
 public class Store {
-    private static String OS =null;
+    private static String OS = null;
     String dir = System.getProperty("user.dir");
 
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
     String str = sdf.format(new Date());
 
 
-
-
     public Store(AIHandler ai) {
 
-        if(OS==null) OS = System.getProperty("os.name").toLowerCase();
-        if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
-        if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
+        if (OS == null) OS = System.getProperty("os.name").toLowerCase();
+        if (isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
+        if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
 
         /**
          String timestamp = Instant.now().toString();
@@ -49,15 +45,15 @@ public class Store {
             ObjectOutput s = new ObjectOutputStream(stream);
 
             //in case of having to save multiple networks
-            if(ai.toString().contains("Hierarchical")){
+            if (ai.toString().contains("Hierarchical")) {
                 /**
-                ArrayList list = ((HierarchicalAI)ai).getAllNetworks();
+                 ArrayList list = ((HierarchicalAI)ai).getAllNetworks();
 
-                for(int i = 0; i < list.size(); i++ ){
-                    s.writeObject(i);
-                }
+                 for(int i = 0; i < list.size(); i++ ){
+                 s.writeObject(i);
+                 }
                  **/
-                ArrayList<TimeDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAI)ai).getAllNetworks();
+                ArrayList<TimeDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAI) ai).getAllNetworks();
                 for (int i = 0; i < 4; i++) {
                     try {
                         FileOutputStream fo = new FileOutputStream(new File(dir + "NeuralNetwork" + i + ".nn"));
@@ -79,7 +75,7 @@ public class Store {
                     }
                 }
 
-            }else {//single network case
+            } else {//single network case
 
                 //stores its neural net
 
@@ -97,27 +93,24 @@ public class Store {
             s.close();
 
             /**
-            stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".csv");
-            s = new ObjectOutputStream(stream);
-            s.writeObject(toCSV(ai.getWinrate())); //are all arrays, so multiple values
-            //s.writeObject(System.lineSeparator());
-            //s.writeObject(toCSV(ai.getError()));
-            //s.writeObject(toCSV(ai.getGenerationPoints()));
-            s.close();
+             stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".csv");
+             s = new ObjectOutputStream(stream);
+             s.writeObject(toCSV(ai.getWinrate())); //are all arrays, so multiple values
+             //s.writeObject(System.lineSeparator());
+             //s.writeObject(toCSV(ai.getError()));
+             //s.writeObject(toCSV(ai.getGenerationPoints()));
+             s.close();
              **/
 
-        /**
-            PrintWriter out = new PrintWriter(dir + ai.getGenerationError().size() + ".csv");
-            out.print("Winrate: ");
-            out.println(toCSV(ai.getWinrate()));
-            out.print("Error: ");
-            out.println(toCSV(ai.getError()));
+            /**
+             PrintWriter out = new PrintWriter(dir + ai.getGenerationError().size() + ".csv");
+             out.print("Winrate: ");
+             out.println(toCSV(ai.getWinrate()));
+             out.print("Error: ");
+             out.println(toCSV(ai.getError()));
 
-            out.close();
-**/
-
-
-
+             out.close();
+             **/
 
 
         } catch (FileNotFoundException e) {
@@ -142,16 +135,16 @@ public class Store {
         return result;
     }
 
-    public Store(ArrayList<Double> win,ArrayList<Double> points,ArrayList<Double> error,AIHandler ai,int accum) {
-        if(OS==null) OS = System.getProperty("os.name").toLowerCase();
-        if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
-        if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
+    public Store(ArrayList<Double> win, ArrayList<Double> points, ArrayList<Double> error, AIHandler ai, int accum) {
+        if (OS == null) OS = System.getProperty("os.name").toLowerCase();
+        if (isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
+        if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
 
 
         try {
             File f = new File(dir);
             f.mkdirs();
-            FileOutputStream stream = new FileOutputStream(dir + "accum[" + accum +"]"+".data");
+            FileOutputStream stream = new FileOutputStream(dir + "accum[" + accum + "]" + ".data");
             ObjectOutput s = new ObjectOutputStream(stream);
             s.writeObject(win);
             s.writeObject(error);
@@ -166,13 +159,12 @@ public class Store {
             out.print("Mean Points: ");
             out.println(toCSV(points));
             /**
-            if(ai.toString().contains("Hierarchical")) {
-                out.println(ai.
-            }
+             if(ai.toString().contains("Hierarchical")) {
+             out.println(ai.
+             }
              **/
 
             out.close();
-
 
 
         } catch (FileNotFoundException e) {
@@ -182,18 +174,17 @@ public class Store {
         }
     }
 
-    public Store(ArrayList<Double> win,ArrayList<Double> points,ArrayList<Double> error,AIHandler ai,String string) {
+    public Store(ArrayList<Double> win, ArrayList<Double> points, ArrayList<Double> error, AIHandler ai, String string) {
 
-        if(OS==null) OS = System.getProperty("os.name").toLowerCase();
-        if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
-        if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
-
+        if (OS == null) OS = System.getProperty("os.name").toLowerCase();
+        if (isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
+        if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
 
 
         try {
             File f = new File(dir);
             f.mkdirs();
-            FileOutputStream stream = new FileOutputStream(dir + string +".data");
+            FileOutputStream stream = new FileOutputStream(dir + string + ".data");
             ObjectOutput s = new ObjectOutputStream(stream);
             s.writeObject(win);
             s.writeObject(error);
@@ -209,11 +200,10 @@ public class Store {
     }
 
 
-
     public Store(JFrame frame, String title) {
-        if(OS==null) OS = System.getProperty("os.name").toLowerCase();
-        if(isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + title + "\\";
-        if(isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + title + "/";
+        if (OS == null) OS = System.getProperty("os.name").toLowerCase();
+        if (isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + title + "\\";
+        if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + title + "/";
 
 
         Container c = frame.getContentPane();
@@ -227,6 +217,7 @@ public class Store {
             e.printStackTrace();
         }
     }
+
     public static boolean isWindows() {
 
         return (OS.indexOf("win") >= 0);
@@ -241,7 +232,33 @@ public class Store {
 
     public static boolean isUnix() {
 
-        return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0 );
+        return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0);
 
     }
+
+    /**
+    //store parameters in textfile
+    public Store(AIHandler ai, int roundTime) {
+        if (OS == null) OS = System.getProperty("os.name").toLowerCase();
+        if (isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
+        if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
+
+        try {
+            PrintWriter out = new PrintWriter(dir + "extra_parameters.txt");
+            out.print("Round time in ms: ");
+            out.println(roundTime);
+
+            if(ai.toString().contains("Hierarchical")) {
+                out.print("Starting temperature: ");
+                out.println(((HierarchicalAI)ai).pathFindingNetwork.TIME);
+            }
+
+                out.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+}
+     **/
 }

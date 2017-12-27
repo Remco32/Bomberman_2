@@ -1,14 +1,14 @@
 package AI;
 
-import GameWorld.*;
+import GameWorld.GameWorld;
+import GameWorld.WorldPosition;
 import MLP.AbstractActivationFunction;
+import MLP.ActivationVectorList;
 import util.GameSettings;
 import util.NNSettings;
 
 import java.io.Serializable;
 import java.util.*;
-
-import MLP.ActivationVectorList;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 

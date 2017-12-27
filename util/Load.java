@@ -1,13 +1,13 @@
 package util;
 
-import AI.AIHandler;
-import AI.HierarchicalAI;
 import AI.TimeDrivenBoltzmanNNFullInput;
 import MLP.ActivationVectorList;
 
 import javax.swing.*;
-import java.io.*;
-import java.util.Arrays;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 /**
  * Created by joseph on 10/04/2017.

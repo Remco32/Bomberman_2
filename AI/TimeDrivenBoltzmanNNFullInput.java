@@ -1,17 +1,21 @@
 package AI;
 
-import GameWorld.*;
+import GameWorld.Bomb;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
+import GameWorld.WorldPosition;
 import MLP.AbstractActivationFunction;
 import MLP.ActivationVectorList;
 import MLP.MLP;
 import util.GameSettings;
 import util.NNSettings;
 
-import java.io.*;
-import java.lang.reflect.Array;
-import java.sql.Time;
+import java.io.BufferedWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by joseph on 27-5-2017.

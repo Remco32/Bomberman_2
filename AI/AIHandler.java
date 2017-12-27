@@ -1,6 +1,7 @@
 package AI;
 
-import GameWorld.*;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
 import MLP.ActivationVectorList;
 import MLP.MLP;
 

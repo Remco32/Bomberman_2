@@ -1,13 +1,10 @@
 package Graphics;
 
-import GameWorld.*;
-import javax.imageio.ImageIO;
+import GameWorld.GameWorld;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by joseph on 9-2-2017.

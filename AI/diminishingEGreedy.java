@@ -4,19 +4,18 @@ package AI;
  * Created by Joseph on 6/8/2017.
  */
 
-import GameWorld.*;
-        import MLP.AbstractActivationFunction;
-        import MLP.ActivationVectorList;
-        import MLP.MLP;
+import GameWorld.Bomb;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
+import GameWorld.WorldPosition;
+import MLP.AbstractActivationFunction;
+import MLP.ActivationVectorList;
+import MLP.MLP;
 import util.GameSettings;
 import util.NNSettings;
 
 import java.text.SimpleDateFormat;
-
-        import java.util.*;
-
-        import static org.apache.commons.math3.util.FastMath.max;
-        import static org.apache.commons.math3.util.FastMath.pow;
+import java.util.*;
 
 /**
  * Created by joseph on 15/02/2017.

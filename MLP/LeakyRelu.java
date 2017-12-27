@@ -3,8 +3,6 @@ package MLP;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import java.util.Arrays;
-
 /**
  * Created by joseph on 30-5-2017.
  */

@@ -1,6 +1,9 @@
 package AI;
 
-import GameWorld.*;
+import GameWorld.Bomb;
+import GameWorld.BomberMan;
+import GameWorld.GameWorld;
+import GameWorld.WorldPosition;
 import MLP.AbstractActivationFunction;
 import MLP.ActivationVectorList;
 import MLP.MLP;
@@ -8,11 +11,7 @@ import util.GameSettings;
 import util.NNSettings;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import static java.lang.Double.max;
 
 
 /**
