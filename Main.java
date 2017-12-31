@@ -27,17 +27,18 @@ public class Main {
     static int AMOUNT_OF_EPOCHS = 1;
     static int AMOUNT_OF_TESTS = 1;
     static int AMOUNT_OF_GENERATIONS = 3;
-
     static int ROUND_TIME = 150; //Time for a single gamestep in ms. Still stable at >=150.
-
-    static boolean FIND_MINIMUM_ROUND_TIME = false; //decreases the roundtime by 1 ms every generation. Should eventually crash the program.
-
     /** SAVING **/
     static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
     static boolean STOREDATA = true;
     /** LOADING **/
     static boolean LOAD_HIERARHCIAL = true; //broken //TODO
     static boolean SELECT_NETWORK_TO_LOAD = true; //also needs to be enabled to load hierarchical
+
+    /** DEBUG **/
+    static boolean FIND_MINIMUM_ROUND_TIME = false; //decreases the roundtime by 1 ms every generation. Should eventually crash the program.
+
+
 
     public static void main(String[] args) {
         // parameters
