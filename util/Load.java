@@ -36,15 +36,18 @@ public class Load {
        }
 
     //loads a single network file for hierarchical
-    public TimeDrivenBoltzmanNNFullInput loadHierarchical() {
+    public ActivationVectorList loadHierarchical() {
         try {
             final JFileChooser chooser = new JFileChooser(System.getProperty("user.dir") + "\\..\\results\\images");
             final int returnVal = chooser.showOpenDialog(chooser);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(chooser.getSelectedFile().getAbsolutePath()));
-                ois.readObject();
-                TimeDrivenBoltzmanNNFullInput network = (TimeDrivenBoltzmanNNFullInput) ois.readObject();
-                return network;
+
+                //ois.readObject();
+                ActivationVectorList loadedNetwork = (ActivationVectorList) ois.readObject();
+                ois.close();
+
+                return loadedNetwork;
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -24,21 +24,20 @@ public class Main {
     int currentGeneration;
 
     /** Parameters **/
-    static int AMOUNT_OF_EPOCHS = 10000;
-    static int AMOUNT_OF_TESTS = 100;
-    static int AMOUNT_OF_GENERATIONS = 100;
+    static int AMOUNT_OF_EPOCHS = 1;
+    static int AMOUNT_OF_TESTS = 1;
+    static int AMOUNT_OF_GENERATIONS = 3;
 
-    //10000 trials take ~12 minutes with round_time 10.
-    static int ROUND_TIME = 10; // time for a single gamestep in ms, default was 200
+    static int ROUND_TIME = 150; //Time for a single gamestep in ms. Still stable at >=150.
 
     static boolean FIND_MINIMUM_ROUND_TIME = false; //decreases the roundtime by 1 ms every generation. Should eventually crash the program.
 
     /** SAVING **/
-    static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
+    static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
     static boolean STOREDATA = true;
     /** LOADING **/
-    static boolean LOAD_HIERARHCIAL = false;
-    static boolean SELECT_NETWORK_TO_LOAD = false;
+    static boolean LOAD_HIERARHCIAL = true; //broken //TODO
+    static boolean SELECT_NETWORK_TO_LOAD = true; //also needs to be enabled to load hierarchical
 
     public static void main(String[] args) {
         // parameters
@@ -161,7 +160,7 @@ public class Main {
             }
             world.SetAi(ai);
             world.setRoundTime(ROUND_TIME);
-            //new Store(ai.get(0), ROUND_TIME);
+            new Store(ai.get(0), ROUND_TIME);
 
             // start training
             for (int gen = 0; gen < gameSettings.getAmountOfGenerations(); gen++) {
@@ -363,10 +362,10 @@ public class Main {
             if (setting.isLOADWEIGHTS() && LOAD_HIERARHCIAL) {
                 System.out.println("Select each hiearchical network in order.");
 
-                //((HierarchicalAI)nn).pathFindingNetwork.activationList = new Load().loadHierarchical();
-                ((HierarchicalAI)nn).oneEnemyNetwork = new Load().loadHierarchical();
-                ((HierarchicalAI)nn).twoEnemiesNetwork = new Load().loadHierarchical();
-                ((HierarchicalAI)nn).threeEnemiesNetwork = new Load().loadHierarchical();
+                ((HierarchicalAI)nn).pathFindingNetwork.setActivationList(new Load().loadHierarchical());
+                ((HierarchicalAI)nn).oneEnemyNetwork.setActivationList(new Load().loadHierarchical());
+                ((HierarchicalAI)nn).twoEnemiesNetwork.setActivationList(new Load().loadHierarchical());
+                ((HierarchicalAI)nn).threeEnemiesNetwork.setActivationList(new Load().loadHierarchical());
             }
 
         }

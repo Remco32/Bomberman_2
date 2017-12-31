@@ -3,6 +3,7 @@ package util;
 import AI.AIHandler;
 import AI.HierarchicalAI;
 import AI.TimeDrivenBoltzmanNNFullInput;
+import MLP.ActivationVectorList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -56,12 +57,13 @@ public class Store {
                 ArrayList<TimeDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAI) ai).getAllNetworks();
                 for (int i = 0; i < 4; i++) {
                     try {
-                        FileOutputStream fo = new FileOutputStream(new File(dir + "NeuralNetwork" + i + ".nn"));
+                        FileOutputStream fo = new FileOutputStream(new File(dir + "NeuralNetwork" + i + " gen" + ai.getGenerationError().size()  + ".nn"));
                         ObjectOutputStream o = new ObjectOutputStream(fo);
 
                         // Write objects to file
-                        TimeDrivenBoltzmanNNFullInput network = neuralNetList.get(i);
-                        o.writeObject(network.getActivationList());
+                        TimeDrivenBoltzmanNNFullInput network = neuralNetList.get(i); //get each individual network
+                        ActivationVectorList list = network.getActivationList();
+                        o.writeObject(list);
 
                         o.close();
                         fo.close();
@@ -236,7 +238,7 @@ public class Store {
 
     }
 
-    /**
+
     //store parameters in textfile
     public Store(AIHandler ai, int roundTime) {
         if (OS == null) OS = System.getProperty("os.name").toLowerCase();
@@ -244,6 +246,10 @@ public class Store {
         if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
 
         try {
+            File f = new File(dir);
+            f.mkdirs();
+
+
             PrintWriter out = new PrintWriter(dir + "extra_parameters.txt");
             out.print("Round time in ms: ");
             out.println(roundTime);
@@ -260,5 +266,5 @@ public class Store {
         }
 
 }
-     **/
+
 }
