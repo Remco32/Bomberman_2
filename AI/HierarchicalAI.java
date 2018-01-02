@@ -508,4 +508,26 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
     }
 
+    public ArrayList<Double> getGenerationErrorNetwork1() {
+        return oneEnemyNetwork.getGenerationError();
+    }
+    public ArrayList<Double> getGenerationErrorNetwork2() {
+        return twoEnemiesNetwork.getGenerationError();
+    }
+    public ArrayList<Double> getGenerationErrorNetwork3() {
+        return threeEnemiesNetwork.getGenerationError();
+    }
+
+    public TimeDrivenBoltzmanNNFullInput getOneEnemyNetwork() {
+        return oneEnemyNetwork;
+    }
+
+    public TimeDrivenBoltzmanNNFullInput getTwoEnemiesNetwork() {
+        return twoEnemiesNetwork;
+    }
+
+    public TimeDrivenBoltzmanNNFullInput getThreeEnemiesNetwork() {
+        return threeEnemiesNetwork;
+    }
+
 }

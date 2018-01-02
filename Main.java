@@ -24,16 +24,16 @@ public class Main {
     int currentGeneration;
 
     /** Parameters **/
-    static int AMOUNT_OF_EPOCHS = 1;
-    static int AMOUNT_OF_TESTS = 1;
-    static int AMOUNT_OF_GENERATIONS = 3;
-    static int ROUND_TIME = 150; //Time for a single gamestep in ms. Still stable at >=150.
+    static int AMOUNT_OF_EPOCHS = 10;
+    static int AMOUNT_OF_TESTS = 10;
+    static int AMOUNT_OF_GENERATIONS = 10;
+    static int ROUND_TIME = 120; //Time for a single gamestep in ms. Still stable at >=120.
     /** SAVING **/
-    static boolean SAVE_EVERY_GENERATION = false; //each generation accumulates 180KB of data
+    static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
     static boolean STOREDATA = true;
     /** LOADING **/
-    static boolean LOAD_HIERARHCIAL = true; //broken //TODO
-    static boolean SELECT_NETWORK_TO_LOAD = true; //also needs to be enabled to load hierarchical
+    static boolean LOAD_HIERARHCIAL = false; //broken
+    static boolean SELECT_NETWORK_TO_LOAD = false; //also needs to be enabled to load hierarchical
 
     /** DEBUG **/
     static boolean FIND_MINIMUM_ROUND_TIME = false; //decreases the roundtime by 1 ms every generation. Should eventually crash the program.
@@ -147,6 +147,11 @@ public class Main {
         ArrayList<ArrayList<Double>> accumulatePoints = new ArrayList<>();
         ArrayList<ArrayList<Double>> accumulateError = new ArrayList<>();
 
+        ArrayList<ArrayList<Double>> accumulateError1 = new ArrayList<>();
+        ArrayList<ArrayList<Double>> accumulateError2 = new ArrayList<>();
+        ArrayList<ArrayList<Double>> accumulateError3 = new ArrayList<>();
+
+
         for (int accumulate = 0; accumulate < gameSettings.getAcummulateTest(); accumulate++) {
             world = new GameWorld(gameSettings.getWorldSize(), gameSettings.getAmountOfPlayers(), gameSettings.isShowWindow());
             window.setWorld(world);
@@ -168,7 +173,7 @@ public class Main {
                 this.currentGeneration = gen;
 
                 if(FIND_MINIMUM_ROUND_TIME){
-                    world.setRoundTime(world.getRoundtime()-1); //decrease by one
+                    world.setRoundTime(world.getRoundtime()-1); //decrease by one every generation
                     System.out.println("Roundtime set to " + world.getRoundtime() + "ms");
                 }
 
@@ -198,6 +203,11 @@ public class Main {
 
                 //updates all the testvalues from currentEpoch level to generation level
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).newGeneration();
+                if(ai.toString().contains("Hierarchical")) {
+                    for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAI) ai.get(0)).getOneEnemyNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAI) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAI) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
+                }
 
                 //double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
                 //System.out.println("\rPercent done:" + procentDone);
@@ -214,16 +224,37 @@ public class Main {
                     accumulateWinrate.add(new ArrayList<Double>());
                     accumulateError.add(new ArrayList<Double>());
                     accumulatePoints.add(new ArrayList<Double>());
+
+                    accumulateError1.add(new ArrayList<Double>());
+                    accumulateError2.add(new ArrayList<Double>());
+                    accumulateError3.add(new ArrayList<Double>());
+
                     for (int x = 0; x <= currentGeneration; x++) {
                         AIHandler temp = ai.get(0);
                         accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                         accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                         accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
+                        if(ai.toString().contains("Hierarchical")) {
+                            accumulateError1.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork1().get(x));
+                            accumulateError2.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork2().get(x));
+                            accumulateError3.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork3().get(x));
+                        }
                     }
-                    new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well
+
+                    if(ai.toString().contains("Hierarchical")) {
+                        new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate,
+                                accumulateError1.get(accumulate), accumulateError2.get(accumulate), accumulateError3.get(accumulate));
+                    }else {
+                        new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well
+                    }
+
+
                     accumulateWinrate.clear();
                     accumulateError.clear();
                     accumulatePoints.clear();
+                    accumulateError1.clear();
+                    accumulateError2.clear();
+                    accumulateError3.clear();
 
                 }
                 printTimeRemaining();
@@ -240,6 +271,11 @@ public class Main {
                 accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                 accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                 accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
+                if(ai.toString().contains("Hierarchical")) {
+                    accumulateError1.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork1().get(x));
+                    accumulateError2.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork2().get(x));
+                    accumulateError3.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork3().get(x));
+                }
             }
             new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well
         }

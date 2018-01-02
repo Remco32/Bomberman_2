@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -94,25 +95,6 @@ public class Store {
             s.writeObject(ai.getGenerationPoints());
             s.close();
 
-            /**
-             stream = new FileOutputStream(dir + ai.getGenerationError().size() + ".csv");
-             s = new ObjectOutputStream(stream);
-             s.writeObject(toCSV(ai.getWinrate())); //are all arrays, so multiple values
-             //s.writeObject(System.lineSeparator());
-             //s.writeObject(toCSV(ai.getError()));
-             //s.writeObject(toCSV(ai.getGenerationPoints()));
-             s.close();
-             **/
-
-            /**
-             PrintWriter out = new PrintWriter(dir + ai.getGenerationError().size() + ".csv");
-             out.print("Winrate: ");
-             out.println(toCSV(ai.getWinrate()));
-             out.print("Error: ");
-             out.println(toCSV(ai.getError()));
-
-             out.close();
-             **/
 
 
         } catch (FileNotFoundException e) {
@@ -156,15 +138,50 @@ public class Store {
             PrintWriter out = new PrintWriter(dir + ai.getGenerationError().size() + ".csv");
             out.print("Mean Winrate: ");
             out.println(toCSV(win));
-            out.print("Mean Error: ");
+            out.print("Mean Error network 0: ");
             out.println(toCSV(error));
             out.print("Mean Points: ");
             out.println(toCSV(points));
-            /**
-             if(ai.toString().contains("Hierarchical")) {
-             out.println(ai.
-             }
-             **/
+
+            out.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //for hierarchical
+    public Store(ArrayList<Double> win, ArrayList<Double> points, ArrayList<Double> error, AIHandler ai, int accum, ArrayList<Double> error1, ArrayList<Double> error2, ArrayList<Double> error3) {
+        if (OS == null) OS = System.getProperty("os.name").toLowerCase();
+        if (isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
+        if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
+
+
+        try {
+            File f = new File(dir);
+            f.mkdirs();
+            FileOutputStream stream = new FileOutputStream(dir + "accum[" + accum + "]" + ".data");
+            ObjectOutput s = new ObjectOutputStream(stream);
+            s.writeObject(win);
+            s.writeObject(error);
+            s.writeObject(points);
+            s.close();
+
+            PrintWriter out = new PrintWriter(dir + ai.getGenerationError().size() + ".csv");
+            out.print("Mean Winrate: ");
+            out.println(toCSV(win));
+            out.print("Mean Error network 0: ");
+            out.println(toCSV(error));
+            out.print("Mean Error network 1: ");
+            out.println(toCSV((error1)));
+            out.print("Mean Error network 2: ");
+            out.println(toCSV((error2)));
+            out.print("Mean Error network 3: ");
+            out.println(toCSV((error3)));
+            out.print("Mean Points: ");
+            out.println(toCSV(points));
 
             out.close();
 
