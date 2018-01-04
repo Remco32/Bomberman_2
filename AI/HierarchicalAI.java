@@ -611,7 +611,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
                 }
 
             }
-            generationError.add(tempError / correctedEpochSize); //TODO ignore NAN values
+            generationError.add(tempError / correctedEpochSize);
 
             Double tempPoints = 0.0;
             for (double temp : epochPoints) tempPoints += temp;
