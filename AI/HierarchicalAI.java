@@ -458,7 +458,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
         //calculate max q value
         if (man.getAlive()) {
-            ActivationVectorList secondpasslist = mlp.forwardPass(CompleteGame(), activationList); //do a forwardspass with the current gamestate and the network of this object. Save the result.
+            ActivationVectorList secondpasslist = mlp.forwardPass(CompleteGame(), activationList); //do a forwardpass with the current gamestate and the network of this object. Save the result.
             double[] secondpass = secondpasslist.getOutput(); // get the values of the output layer
             double maxOutcome = Double.NEGATIVE_INFINITY;
             for (int moveidx = 0; moveidx < secondpass.length; moveidx++) { // go through all output values
@@ -474,11 +474,11 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
         if (PRINT) System.out.println("outcome:" + outcome);
         if (PRINT) System.out.println("output" + Arrays.toString(targets) + "\n\n");
-        if(currentStrategy > 0) {
+        //if(currentStrategy > 0) {
             correctNetwork.error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
-        }else{
-            error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
-        }
+        //}else{
+        //    error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
+        //}
 
         activationList = mlp.BackwardPass(activationList, targets); //update the weights using the new target
         correctNetwork.setActivationList(activationList);
@@ -602,8 +602,16 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
             ArrayList<Double>  generationPoints = network.getGenerationPoints();
 
             double tempError = 0;
-            for (double temp : epochError) tempError += temp;
-            generationError.add(tempError / epochError.size()); //TODO ignore NAN values
+            int correctedEpochSize = epochError.size();
+            for (Double temp : epochError){
+                if(!temp.isNaN()) {//only add the value if it is a number
+                    tempError += temp;
+                }else{
+                    correctedEpochSize--; //decrease epoch size to correct for amount of values.
+                }
+
+            }
+            generationError.add(tempError / correctedEpochSize); //TODO ignore NAN values
 
             Double tempPoints = 0.0;
             for (double temp : epochPoints) tempPoints += temp;
