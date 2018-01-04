@@ -273,7 +273,7 @@ public class Store {
 
             if(ai.toString().contains("Hierarchical")) {
                 out.print("Starting temperature: ");
-                out.println(((HierarchicalAI)ai).pathFindingNetwork.TIME);
+                out.println(((HierarchicalAI)ai).TIME);
             }
 
                 out.close();

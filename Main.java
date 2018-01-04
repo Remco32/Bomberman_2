@@ -26,7 +26,7 @@ public class Main {
     /** Parameters **/
     static int AMOUNT_OF_EPOCHS = 10;
     static int AMOUNT_OF_TESTS = 10;
-    static int AMOUNT_OF_GENERATIONS = 10;
+    static int AMOUNT_OF_GENERATIONS = 40;
     static int ROUND_TIME = 120; //Time for a single gamestep in ms. Still stable at >=120.
     /** SAVING **/
     static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
@@ -266,6 +266,9 @@ public class Main {
             accumulateWinrate.add(new ArrayList<Double>());
             accumulateError.add(new ArrayList<Double>());
             accumulatePoints.add(new ArrayList<Double>());
+            accumulateError1.add(new ArrayList<Double>());
+            accumulateError2.add(new ArrayList<Double>());
+            accumulateError3.add(new ArrayList<Double>());
             for (int x = 0; x < gameSettings.getAmountOfGenerations(); x++) {
                 AIHandler temp = ai.get(0);
                 accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));

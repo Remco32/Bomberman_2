@@ -474,11 +474,14 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
         if (PRINT) System.out.println("outcome:" + outcome);
         if (PRINT) System.out.println("output" + Arrays.toString(targets) + "\n\n");
-        error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
+        if(currentStrategy > 0) {
+            correctNetwork.error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
+        }else{
+            error.add(mlp.TotalError(targets, targetforError)); //calculate the total error and add it to the array
+        }
+
         activationList = mlp.BackwardPass(activationList, targets); //update the weights using the new target
         correctNetwork.setActivationList(activationList);
-
-        if (PRINT) System.out.println();
 
     }
 
@@ -530,4 +533,103 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
         return threeEnemiesNetwork;
     }
 
+    public void EndOfRound(double win) {
+
+        TimeDrivenBoltzmanNNFullInput network = pathFindingNetwork;
+
+        //account for the four networks
+        for (int i = 0; i <= 3; i++) {
+            switch (i) {
+                case 0:
+                    network = pathFindingNetwork;
+                    break;
+                case 1:
+                    network = oneEnemyNetwork;
+                    break;
+                case 2:
+                    network = twoEnemiesNetwork;
+                    break;
+                case 3:
+                    network = threeEnemiesNetwork;
+                    break;
+            }
+
+            ArrayList<Double> winrate = network.getWinrate();
+            ArrayList<Double> epochError = network.getEpochError();
+            ArrayList<Integer> epochPoints = network.getEpochPoints();
+
+            if (testing) {
+                win += winrate.get(winrate.size() - 1);
+                winrate.set(winrate.size() - 1, win);
+                int tempPoints = 0;
+                for (double temp : man.getPoints()) tempPoints += temp; //all networks correspond to the same agent
+                epochPoints.add(tempPoints);
+            }
+            double tempError = 0;
+            for (double temp : network.getError()) tempError += temp;
+            epochError.add(tempError / (double) network.getError().size());
+            network.setError(new ArrayList<>());
+            //error = new ArrayList<>();
+        }
+
+    }
+
+    public void newGeneration() {
+
+        TimeDrivenBoltzmanNNFullInput network = pathFindingNetwork;
+
+        //account for the four networks
+        for (int i = 0; i <= 3; i++) {
+            switch (i) {
+                case 0:
+                    network = pathFindingNetwork;
+                    break;
+                case 1:
+                    network = oneEnemyNetwork;
+                    break;
+                case 2:
+                    network = twoEnemiesNetwork;
+                    break;
+                case 3:
+                    network = threeEnemiesNetwork;
+                    break;
+            }
+
+            ArrayList<Double> winrate = network.getWinrate();
+            ArrayList<Double> epochError = network.getEpochError();
+            ArrayList<Integer> epochPoints = network.getEpochPoints();
+            ArrayList<Double> generationError = network.getGenerationError();
+            ArrayList<Double>  generationPoints = network.getGenerationPoints();
+
+            double tempError = 0;
+            for (double temp : epochError) tempError += temp;
+            generationError.add(tempError / epochError.size()); //TODO ignore NAN values
+
+            Double tempPoints = 0.0;
+            for (double temp : epochPoints) tempPoints += temp;
+            generationPoints.add(tempPoints / epochPoints.size());
+
+            int wsize = winrate.size() - 1;
+            winrate.set(wsize, (winrate.get(wsize) / (double) (2 * epochPoints.size())) + 0.5);
+            winrate.add(0.0);
+
+            network.setEpochPoints(new ArrayList<>());
+            network.setEpochError(new ArrayList<>());
+        }
+    }
+
+    @Override
+    public ArrayList<Double> getGenerationError() {
+        return pathFindingNetwork.getGenerationError();
+    }
+
+    @Override
+    public ArrayList<Double> getGenerationPoints() {
+        return pathFindingNetwork.getGenerationPoints();
+    }
+
+    @Override
+    public ArrayList<Double> getWinrate() {
+        return pathFindingNetwork.getWinrate();
+    }
 }

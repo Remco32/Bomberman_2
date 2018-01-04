@@ -83,5 +83,7 @@ public class ActivationVectorList implements Serializable{
         networkName = name;
     }
 
-
+    public String getNetworkName() {
+        return networkName;
+    }
 }

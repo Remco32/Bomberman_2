@@ -194,4 +194,20 @@ public class AIHandler implements Serializable {
     public void setEpochSize(int epochSize) {
         this.epochSize = epochSize;
     }
+
+    public ArrayList<Integer> getEpochPoints(){
+        return epochPoints;
+    }
+
+    public void setError(ArrayList<Double> error) {
+        this.error = error;
+    }
+
+    public void setEpochError(ArrayList<Double> epochError) {
+        this.epochError = epochError;
+    }
+
+    public void setEpochPoints(ArrayList<Integer> epochPoints) {
+        this.epochPoints = epochPoints;
+    }
 }
