@@ -19,8 +19,8 @@ import java.util.*;
  */
 public class ErrorDrivenBoltzmanNNFullInput extends AIHandler {
 
-    private ActivationVectorList activationList;
-    private int inputSize = 6; // all basic features
+    public ActivationVectorList activationList;
+    public int inputSize = 6; // all basic features
 
 
     static private int viewingRange = 2;
@@ -57,7 +57,7 @@ public class ErrorDrivenBoltzmanNNFullInput extends AIHandler {
         activationList = new ActivationVectorList(initWeights, activationFunctionArrayList);
 
 
-        SimpleDateFormat dtf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dtf = new SimpleDateFormat("yyyy-MM-dd HH mm ss");
         Date localDate = new Date();
         tostring = dtf.format(localDate) + Arrays.toString(setting.getWeigths()) +", " + this.getClass() +  ", man"+ manIndex +"activation functions" + Arrays.toString(setting.getFunctions()) +"size" +getGenerationSize() + "," + getEpochSize()+"learningrate" + learningRate +", exploration" + explorationChance;
 
@@ -70,8 +70,8 @@ public class ErrorDrivenBoltzmanNNFullInput extends AIHandler {
 
     public double[] CompleteGame() {
         int worldSize = world.getGridSize();
-        int x = man.getX_location();
-        int y = man.getY_location();
+        //int x = man.getX_location();
+        //int y = man.getY_location();
 
         ArrayList<Double> gridList = new ArrayList<>();
         for (int xIdx = 0; xIdx < worldSize; xIdx++) {
@@ -125,7 +125,7 @@ public class ErrorDrivenBoltzmanNNFullInput extends AIHandler {
     }
 
 
-    private ActivationVectorList CalculateBestMove() {
+    public ActivationVectorList CalculateBestMove() {
         activationList = mlp.forwardPass(CompleteGame(), activationList);
         return activationList;
     }
@@ -268,4 +268,11 @@ public class ErrorDrivenBoltzmanNNFullInput extends AIHandler {
     public ActivationVectorList getActivationVectorlist() {
         return activationList;
     }
+
+    public void setActivationList(ActivationVectorList activationList) {
+        this.activationList = activationList;
+    }
 }
+
+
+

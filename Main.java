@@ -12,7 +12,10 @@ import util.Store;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by joseph on 25/03/2017.
@@ -27,7 +30,7 @@ public class Main {
     static int AMOUNT_OF_EPOCHS = 10;
     static int AMOUNT_OF_TESTS = 10;
     static int AMOUNT_OF_GENERATIONS = 10;
-    static int ROUND_TIME = 200; //Time for a single gamestep in ms. Still stable at >=120.
+    static int ROUND_TIME = 200; //Time for a single gamestep in ms.
     /** SAVING **/
     static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
     static boolean STOREDATA = true;
@@ -76,6 +79,11 @@ public class Main {
 
     }
 
+    void printCurrentTime(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        System.out.println("Starting date: " + dateFormat.format(date));
+    }
 
     void printTimeRemaining(){
         double estimatedTimeLeft = 0;
@@ -151,7 +159,7 @@ public class Main {
         ArrayList<ArrayList<Double>> accumulateError2 = new ArrayList<>();
         ArrayList<ArrayList<Double>> accumulateError3 = new ArrayList<>();
 
-
+        printCurrentTime();
         for (int accumulate = 0; accumulate < gameSettings.getAcummulateTest(); accumulate++) {
             world = new GameWorld(gameSettings.getWorldSize(), gameSettings.getAmountOfPlayers(), gameSettings.isShowWindow());
             window.setWorld(world);
