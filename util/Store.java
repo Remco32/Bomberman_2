@@ -257,7 +257,7 @@ public class Store {
 
 
     //store parameters in textfile
-    public Store(AIHandler ai, int roundTime) {
+    public Store(AIHandler ai, int roundTime, NNSettings settings) {
         if (OS == null) OS = System.getProperty("os.name").toLowerCase();
         if (isWindows()) dir = System.getProperty("user.dir") + "\\..\\results\\images\\" + ai.toString() + "\\";
         if (isUnix()) dir = System.getProperty("user.dir") + "/../results/images/" + ai.toString() + "/";
@@ -275,6 +275,23 @@ public class Store {
                 out.print("Starting temperature: ");
                 out.println(((HierarchicalAI)ai).TIME);
             }
+
+            out.print("Discount rate: ");
+            out.println(settings.getDiscount());
+
+            out.print("Exploration rate: ");
+            out.println(settings.getExplorationRate());
+
+            out.print("Learning rate: ");
+            out.println(settings.getLearningRate());
+
+            out.print("Amount of hidden nodes: ");
+            out.println(settings.getWeigths()[0]); // get hidden layer only
+
+            out.print("Activation functions (0=linear, 1=sigmoid): ");
+            out.print(settings.getFunctions()[0]);
+            out.print(", ");
+            out.println(settings.getFunctions()[1]);
 
                 out.close();
 

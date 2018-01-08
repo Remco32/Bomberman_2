@@ -24,10 +24,10 @@ public class Main {
     int currentGeneration;
 
     /** Parameters **/
-    static int AMOUNT_OF_EPOCHS = 10000;
-    static int AMOUNT_OF_TESTS = 100;
-    static int AMOUNT_OF_GENERATIONS = 100;
-    static int ROUND_TIME = 120; //Time for a single gamestep in ms. Still stable at >=120.
+    static int AMOUNT_OF_EPOCHS = 10;
+    static int AMOUNT_OF_TESTS = 10;
+    static int AMOUNT_OF_GENERATIONS = 10;
+    static int ROUND_TIME = 200; //Time for a single gamestep in ms. Still stable at >=120.
     /** SAVING **/
     static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
     static boolean STOREDATA = true;
@@ -166,7 +166,7 @@ public class Main {
             }
             world.SetAi(ai);
             world.setRoundTime(ROUND_TIME);
-            new Store(ai.get(0), ROUND_TIME);
+            new Store(ai.get(0), ROUND_TIME, NNSettingsList.get(0)); //stores parameters
 
             // start training
             for (int gen = 0; gen < gameSettings.getAmountOfGenerations(); gen++) {
