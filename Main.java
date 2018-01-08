@@ -27,9 +27,9 @@ public class Main {
     int currentGeneration;
 
     /** Parameters **/
-    static int AMOUNT_OF_EPOCHS = 10;
-    static int AMOUNT_OF_TESTS = 10;
-    static int AMOUNT_OF_GENERATIONS = 10;
+    static int AMOUNT_OF_EPOCHS = 10000;
+    static int AMOUNT_OF_TESTS = 100;
+    static int AMOUNT_OF_GENERATIONS = 100;
     static int ROUND_TIME = 200; //Time for a single gamestep in ms.
     /** SAVING **/
     static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data

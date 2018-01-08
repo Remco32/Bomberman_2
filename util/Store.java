@@ -59,7 +59,7 @@ public class Store {
                 ArrayList<ErrorDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAI) ai).getAllNetworks();
                 for (int i = 0; i < 4; i++) {
                     try {
-                        FileOutputStream fo = new FileOutputStream(new File(dir + "NeuralNetwork" + i + "_gen" + ai.getGenerationError().size()  + ".nn"));
+                        FileOutputStream fo = new FileOutputStream(new File(dir + "gen" + ai.getGenerationError().size() + "_NeuralNetwork" + i + ".nn"));
                         ObjectOutputStream o = new ObjectOutputStream(fo);
 
                         // Write objects to file
