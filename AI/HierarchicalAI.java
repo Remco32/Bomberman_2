@@ -32,6 +32,17 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
     private int currentStrategy = 0; //0 = pathfinding, 1 = one enemy, etc
 
+    public int DEATH_REWARD_PATHFINDING = -300;
+    public int KILL_REWARD_PATHFINDING = 0;
+    public int WALL_REWARD_PATHFINDING = 30;
+    public int MOVE_REWARD_PATHFINDING = -1;
+
+    public int DEATH_REWARD_ATTACKING = -300;
+    public int KILL_REWARD_ATTACKING = 100;
+    public int WALL_REWARD_ATTACKING = 0;
+    public int MOVE_REWARD_ATTACKING = -1;
+
+
     public ActivationVectorList activationList;
 
 
@@ -118,17 +129,17 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
     //Changes the rewards to the other set
     void changeStrategyRewards(int strategyNumber){
         if(strategyNumber == 1) { //Pathfinding
-            //Bomb.setDIECOST(-300); redundant
-            man.setKillReward(0);
-            man.setWallReward(30);
-            //BomberMan.setMOVECOST(-1); redundant
+            GameWorld.Bomb.setDIECOST(DEATH_REWARD_PATHFINDING); //TODO only applies to newly set bombs now
+            man.setKillReward(KILL_REWARD_PATHFINDING);
+            man.setWallReward(WALL_REWARD_PATHFINDING);
+            man.setMOVECOST(MOVE_REWARD_PATHFINDING);
         }
 
         if(strategyNumber == 2) { //Attacking
-            //Bomb.setDIECOST(-300); redundant
-            man.setKillReward(100);
-            man.setWallReward(0);
-            //BomberMan.setMOVECOST(-1); redundant
+            GameWorld.Bomb.setDIECOST(DEATH_REWARD_ATTACKING);
+            man.setKillReward(KILL_REWARD_ATTACKING);
+            man.setWallReward(WALL_REWARD_ATTACKING);
+            man.setMOVECOST(MOVE_REWARD_ATTACKING);
         }
     }
 
@@ -640,4 +651,5 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
     public ArrayList<Double> getWinrate() {
         return pathFindingNetwork.getWinrate();
     }
+
 }

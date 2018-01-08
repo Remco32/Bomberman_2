@@ -274,6 +274,12 @@ public class Store {
             if(ai.toString().contains("Hierarchical")) {
                 out.print("Starting temperature: ");
                 out.println(((HierarchicalAI)ai).TIME);
+
+                out.print("Rewards pathfinding strategy (death, kill, wall, move): ");
+                out.println(((HierarchicalAI)ai).DEATH_REWARD_PATHFINDING + "," + ((HierarchicalAI)ai).KILL_REWARD_PATHFINDING + "," + ((HierarchicalAI)ai).WALL_REWARD_PATHFINDING + "," + ((HierarchicalAI)ai).MOVE_REWARD_PATHFINDING );
+
+                out.print("Rewards attacking strategy (death, kill, wall, move): ");
+                out.println(((HierarchicalAI)ai).DEATH_REWARD_ATTACKING + "," + ((HierarchicalAI)ai).KILL_REWARD_ATTACKING + "," + ((HierarchicalAI)ai).WALL_REWARD_ATTACKING + "," + ((HierarchicalAI)ai).MOVE_REWARD_ATTACKING );
             }
 
             out.print("Discount rate: ");
