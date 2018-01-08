@@ -10,6 +10,7 @@ import util.NNSettings;
 import java.io.Serializable;
 import java.util.*;
 
+import static GameWorld.GameWorld.*;
 import static org.apache.commons.math3.util.FastMath.abs;
 
 
@@ -17,7 +18,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Serializable {
+public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
@@ -25,10 +26,10 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
     WorldPosition targetPosition;
     //protected MLP mlp2;
-    public TimeDrivenBoltzmanNNFullInput pathFindingNetwork;
-    public TimeDrivenBoltzmanNNFullInput oneEnemyNetwork;
-    public TimeDrivenBoltzmanNNFullInput twoEnemiesNetwork;
-    public TimeDrivenBoltzmanNNFullInput threeEnemiesNetwork;
+    public ErrorDrivenBoltzmanNNFullInput pathFindingNetwork;
+    public ErrorDrivenBoltzmanNNFullInput oneEnemyNetwork;
+    public ErrorDrivenBoltzmanNNFullInput twoEnemiesNetwork;
+    public ErrorDrivenBoltzmanNNFullInput threeEnemiesNetwork;
 
     private int currentStrategy = 0; //0 = pathfinding, 1 = one enemy, etc
 
@@ -53,17 +54,17 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
         super(world, manIndex, setting, gSet);
         this.world = world;
 
-        pathFindingNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+        pathFindingNetwork = new ErrorDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
-        oneEnemyNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+        oneEnemyNetwork = new ErrorDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
         if(world.getAmountPlayers() >= 3){
-            twoEnemiesNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+            twoEnemiesNetwork = new ErrorDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
         }
 
         if(world.getAmountPlayers() >= 4){
-            threeEnemiesNetwork = new TimeDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
+            threeEnemiesNetwork = new ErrorDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
         }
 
         ArrayList<AbstractActivationFunction> activationFunctionArrayList = mlp.CreateActivationFunctionList(setting.getFunctions());
@@ -103,7 +104,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
     int calculateMove() {
         int move = 0;
-        TimeDrivenBoltzmanNNFullInput network = getCorrectNetworkForStrategy();
+        ErrorDrivenBoltzmanNNFullInput network = getCorrectNetworkForStrategy();
 
         //Forwardpass
         network.activationList = mlp.forwardPass(CompleteGame(), activationList);
@@ -116,12 +117,22 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
                 maxOutcome = output[idx];
             }
         }
-        double random = rnd.nextDouble();
-        if (!network.testing && random < network.explorationChance) {
-            move = network.TimeBoltzMan(output); //make a "random" move instead
+        double value = new Random().nextDouble() % 1;
+        double relativeError;
+        if (getGenerationError().size() <= 2) relativeError =explorationChance;
+        else {
+            double error1= getGenerationError().get(getGenerationError().size() - 1);
+            double error2 = getGenerationError().get(getGenerationError().size() - 2);
+            if(error1>error2) relativeError = error2/error1;
+            else{relativeError = error1/error2;}
+            relativeError = Math.min(explorationChance,1-relativeError);
+        }
+
+        if ( relativeError> value && !testing) {
+            move = new Random().nextInt(6);
             if (PRINT) System.out.println("random!");
         }
-        network.setActivationList(network.activationList);
+        if (PRINT) System.out.println("move:" + move);
         return move;
     }
 
@@ -129,17 +140,17 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
     //Changes the rewards to the other set
     void changeStrategyRewards(int strategyNumber){
         if(strategyNumber == 1) { //Pathfinding
-            GameWorld.Bomb.setDIECOST(DEATH_REWARD_PATHFINDING); //TODO only applies to newly set bombs now
+            //world.Bomb.setDIECOST(DEATH_REWARD_PATHFINDING);
             man.setKillReward(KILL_REWARD_PATHFINDING);
             man.setWallReward(WALL_REWARD_PATHFINDING);
-            man.setMOVECOST(MOVE_REWARD_PATHFINDING);
+            //man.setMOVECOST(MOVE_REWARD_PATHFINDING);
         }
 
         if(strategyNumber == 2) { //Attacking
-            GameWorld.Bomb.setDIECOST(DEATH_REWARD_ATTACKING);
+            //world.Bomb.setDIECOST(DEATH_REWARD_ATTACKING);
             man.setKillReward(KILL_REWARD_ATTACKING);
             man.setWallReward(WALL_REWARD_ATTACKING);
-            man.setMOVECOST(MOVE_REWARD_ATTACKING);
+            //man.setMOVECOST(MOVE_REWARD_ATTACKING);
         }
     }
 
@@ -428,9 +439,9 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
         return currentStrategy;
     }
 
-    public ArrayList<TimeDrivenBoltzmanNNFullInput> getAllNetworks(){
+    public ArrayList<ErrorDrivenBoltzmanNNFullInput> getAllNetworks(){
 
-        ArrayList<TimeDrivenBoltzmanNNFullInput> returnList = new ArrayList<>() ;
+        ArrayList<ErrorDrivenBoltzmanNNFullInput> returnList = new ArrayList<>() ;
         returnList.add(pathFindingNetwork);
         returnList.add(oneEnemyNetwork);
         returnList.add(twoEnemiesNetwork);
@@ -451,7 +462,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
         //ActivationVectorList activationList;
         //select correct network
-        TimeDrivenBoltzmanNNFullInput correctNetwork = getCorrectNetworkForStrategy();
+        ErrorDrivenBoltzmanNNFullInput correctNetwork = getCorrectNetworkForStrategy();
         activationList = correctNetwork.getActivationList(); //get the network of the right strategy
         //filthy hack //todo remove filthy hack
         activationList.setNetworkName("Strategy "+currentStrategy);
@@ -496,7 +507,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
     }
 
-    TimeDrivenBoltzmanNNFullInput getCorrectNetworkForStrategy() {
+    ErrorDrivenBoltzmanNNFullInput getCorrectNetworkForStrategy() {
         if (SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES) { //global variable to decide if we use specialized networks for each amount of enemies
             //switch to determine the use of the right network
             switch (currentStrategy) {
@@ -532,21 +543,21 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
         return threeEnemiesNetwork.getGenerationError();
     }
 
-    public TimeDrivenBoltzmanNNFullInput getOneEnemyNetwork() {
+    public ErrorDrivenBoltzmanNNFullInput getOneEnemyNetwork() {
         return oneEnemyNetwork;
     }
 
-    public TimeDrivenBoltzmanNNFullInput getTwoEnemiesNetwork() {
+    public ErrorDrivenBoltzmanNNFullInput getTwoEnemiesNetwork() {
         return twoEnemiesNetwork;
     }
 
-    public TimeDrivenBoltzmanNNFullInput getThreeEnemiesNetwork() {
+    public ErrorDrivenBoltzmanNNFullInput getThreeEnemiesNetwork() {
         return threeEnemiesNetwork;
     }
 
     public void EndOfRound(double win) {
 
-        TimeDrivenBoltzmanNNFullInput network = pathFindingNetwork;
+        ErrorDrivenBoltzmanNNFullInput network = pathFindingNetwork;
 
         //account for the four networks
         for (int i = 0; i <= 3; i++) {
@@ -587,7 +598,7 @@ public class HierarchicalAI extends TimeDrivenBoltzmanNNFullInput implements Ser
 
     public void newGeneration() {
 
-        TimeDrivenBoltzmanNNFullInput network = pathFindingNetwork;
+        ErrorDrivenBoltzmanNNFullInput network = pathFindingNetwork;
 
         //account for the four networks
         for (int i = 0; i <= 3; i++) {
