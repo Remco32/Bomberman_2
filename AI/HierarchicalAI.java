@@ -24,6 +24,8 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
     private boolean DEBUG_PRINT_FOUND_PATH = false;
 
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
+    private boolean USE_SINGLE_NETWORK = true;
+
     WorldPosition targetPosition;
     //protected MLP mlp2;
     public ErrorDrivenBoltzmanNNFullInput pathFindingNetwork;
@@ -81,21 +83,30 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
         List targetEnemies = checkPathToEnemies();
         targetableEnemyCount = targetEnemies.size(); //targetable enemies
 
-        if (targetableEnemyCount > 0) { // Second strategy: Attacking
-            if (DEBUG_PRINT_ENEMYCOUNT) System.out.println("Second strategy: Attacking. Amount of targets: " + targetableEnemyCount);
-            if (DEBUG_PRINT_ENEMYCOUNT) System.out.println("Enemies alive: " + (world.getAmountOfAlivePlayers()-1));
-            //change rewards to rewards for this strat
-            currentStrategy = targetableEnemyCount;
-            changeStrategyRewards(2); //Rewards for attacking strat
-            move = calculateMove();
+        if(!USE_SINGLE_NETWORK) {
+            if (targetableEnemyCount > 0) { // Second strategy: Attacking
+                if (DEBUG_PRINT_ENEMYCOUNT)
+                    System.out.println("Second strategy: Attacking. Amount of targets: " + targetableEnemyCount);
+                if (DEBUG_PRINT_ENEMYCOUNT)
+                    System.out.println("Enemies alive: " + (world.getAmountOfAlivePlayers() - 1));
+                //change rewards to rewards for this strat
+                currentStrategy = targetableEnemyCount;
+                changeStrategyRewards(2); //Rewards for attacking strat
+                move = calculateMove();
 
-        } else {
-            if (DEBUG) System.out.println("First strategy: Pathfinding");
-            //change rewards to rewards for this strat
-            currentStrategy = targetableEnemyCount;
-            changeStrategyRewards(1); //Rewards for pathfinding strat
-            move = calculateMove();
+            } else {
+                if (DEBUG) System.out.println("First strategy: Pathfinding");
+                //change rewards to rewards for this strat
+                currentStrategy = targetableEnemyCount;
+                changeStrategyRewards(1); //Rewards for pathfinding strat
+                move = calculateMove();
 
+            }
+        }
+        else{
+            currentStrategy = 0; //force single network
+            changeStrategyRewards(-1);
+            move = calculateMove();
         }
         //add to movebuffer
         moves.add(move);// add the move to the move list
@@ -150,6 +161,13 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
             //world.Bomb.setDIECOST(DEATH_REWARD_ATTACKING);
             man.setKillReward(KILL_REWARD_ATTACKING);
             man.setWallReward(WALL_REWARD_ATTACKING);
+            //man.setMOVECOST(MOVE_REWARD_ATTACKING);
+        }
+
+        if(strategyNumber == -1) { //Single network
+            //world.Bomb.setDIECOST(DEATH_REWARD_ATTACKING);
+            man.setKillReward(KILL_REWARD_ATTACKING);
+            man.setWallReward(WALL_REWARD_PATHFINDING);
             //man.setMOVECOST(MOVE_REWARD_ATTACKING);
         }
     }
