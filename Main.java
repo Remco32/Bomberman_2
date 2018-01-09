@@ -31,11 +31,13 @@ public class Main {
     static int AMOUNT_OF_TESTS = 100;
     static int AMOUNT_OF_GENERATIONS = 100;
     static int ROUND_TIME = 200; //Time for a single gamestep in ms.
+    static double EXPLORATION_RATE = 0.3;
+    static double LEARNING_RATE = 0.0001;
     /** SAVING **/
-    static boolean SAVE_EVERY_GENERATION = true; //each generation accumulates 180KB of data
+    static boolean SAVE_EVERY_GENERATION = true;
     static boolean STOREDATA = true;
     /** LOADING **/
-    static boolean LOAD_HIERARHCIAL = false; //broken
+    static boolean LOAD_HIERARHCIAL = false;
     static boolean SELECT_NETWORK_TO_LOAD = false; //also needs to be enabled to load hierarchical
 
     /** DEBUG **/
@@ -54,7 +56,7 @@ public class Main {
         nn1.setFunctions(new int[]{MLP.SIGMOID, MLP.LINEAR});
         nn1.setTypeNetwork(NNSettings.HIERARCHICAL);
         nnSettingsArrayList.add(nn1);
-        nn1.setExplorationRate(0.3);
+        nn1.setExplorationRate(EXPLORATION_RATE);
         nn1.setLOADWEIGHTS(SELECT_NETWORK_TO_LOAD);
         nn1.setSTOREDATA(STOREDATA);
 
@@ -64,7 +66,7 @@ public class Main {
 //        nn2.setFunctions(new int[]{MLP.SIGMOID, MLP.LINEAR});
 //        nn2.setTypeNetwork(NNSettings.NEURAL_NETWORK_FULL_INPUT);
 //        nnSettingsArrayList.add(nn2);
-        nn1.setLearningRate(0.0001);
+        nn1.setLearningRate(LEARNING_RATE);
         Gset.setAmountOfEpochs(AMOUNT_OF_EPOCHS); //Amount of games played per set
         Gset.setAmountOfGenerations(AMOUNT_OF_GENERATIONS); //Amount of sets of all training games and then all test games
         Gset.setAmountOfTests(AMOUNT_OF_TESTS); //amount of test trials after each set of training trials
