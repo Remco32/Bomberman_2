@@ -24,7 +24,7 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
     private boolean DEBUG_PRINT_FOUND_PATH = false;
 
     private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
-    private boolean USE_SINGLE_NETWORK = true;
+    private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
     //protected MLP mlp2;
@@ -147,7 +147,7 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
         return move;
     }
 
-    //doesn't change the values for already active bombs. Shouldn't be a problem. A kill caused during the pathfinding strategy is a mere accident.
+    //doesn't change the values for already active bombs. Shouldn't be a problem. A kill caused during the pathfinding strategy is a mere accident. //TODO change rewards all active bombs
     //Changes the rewards to the other set
     void changeStrategyRewards(int strategyNumber){
         if(strategyNumber == 1) { //Pathfinding
