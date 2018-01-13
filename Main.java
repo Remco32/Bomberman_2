@@ -30,7 +30,7 @@ public class Main {
     static int AMOUNT_OF_EPOCHS = 10000;
     static int AMOUNT_OF_TESTS = 100;
     static int AMOUNT_OF_GENERATIONS = 100;
-    static int ROUND_TIME = 200; //Time for a single gamestep in ms.
+    static int ROUND_TIME = 1; //Time for a single gamestep in ms.
     static double EXPLORATION_RATE = 0.3;
     static double LEARNING_RATE = 0.0001;
     /** SAVING **/
@@ -55,6 +55,7 @@ public class Main {
         nn1.setWeigths(new int[]{100, 6});
         nn1.setFunctions(new int[]{MLP.SIGMOID, MLP.LINEAR});
         nn1.setTypeNetwork(NNSettings.HIERARCHICAL);
+        //nn1.setTypeNetwork(NNSettings.NEURAL_NETWORK_ERROR_BOLTZMAN);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(EXPLORATION_RATE);
         nn1.setLOADWEIGHTS(SELECT_NETWORK_TO_LOAD);

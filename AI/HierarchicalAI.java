@@ -58,11 +58,11 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
 
         pathFindingNetwork = new ErrorDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
+
         oneEnemyNetwork = new ErrorDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
 
         if(world.getAmountPlayers() >= 3){
             twoEnemiesNetwork = new ErrorDrivenBoltzmanNNFullInput(world, manIndex, setting, gSet);
-
         }
 
         if(world.getAmountPlayers() >= 4){
@@ -484,10 +484,12 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
         activationList = correctNetwork.getActivationList(); //get the network of the right strategy
         //filthy hack //todo remove filthy hack
         activationList.setNetworkName("Strategy "+currentStrategy);
+        /*
         //debug
         if(currentStrategy > 0){
             if (DEBUG) System.out.println("Attacking");
         }
+        */
         double[] targets = activationList.getOutput(); // get the expected Q-values
         double[] targetforError = targets.clone(); //make a copy
         if (PRINT) System.out.println("expected" + Arrays.toString(targets));
@@ -679,6 +681,25 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
     @Override
     public ArrayList<Double> getWinrate() {
         return pathFindingNetwork.getWinrate();
+    }
+
+    @Override
+    public void setNewBomberman() {
+        error = new ArrayList<>();
+        moves = new ArrayList<>();
+        man = world.getBomberManList().get(manIndex);
+        pathFindingNetwork.setMan(man);
+        oneEnemyNetwork.setMan(man);
+        if(world.getAmountPlayers() >= 3) {
+            twoEnemiesNetwork.setMan(man);
+        }
+        if(world.getAmountPlayers() >= 4) {
+            threeEnemiesNetwork.setMan(man);
+        }
+
+
+
+
     }
 
 }

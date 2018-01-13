@@ -210,4 +210,12 @@ public class AIHandler implements Serializable {
     public void setEpochPoints(ArrayList<Integer> epochPoints) {
         this.epochPoints = epochPoints;
     }
+
+    public void setManIndex(int manIndex) {
+        this.manIndex = manIndex;
+    }
+
+    public void setMan(BomberMan man) {
+        this.man = man;
+    }
 }
