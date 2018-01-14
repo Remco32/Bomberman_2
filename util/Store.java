@@ -137,11 +137,11 @@ public class Store {
             s.close();
 
             PrintWriter out = new PrintWriter(dir + ai.getGenerationError().size() + ".csv");
-            out.print("Mean Winrate: ");
+            out.print("Mean Winrate, ");
             out.println(toCSV(win));
-            out.print("Mean Error network 0: ");
+            out.print("Mean Error network 0, ");
             out.println(toCSV(error));
-            out.print("Mean Points: ");
+            out.print("Mean Points, ");
             out.println(toCSV(points));
 
             out.close();
@@ -171,15 +171,15 @@ public class Store {
             s.close();
 
             PrintWriter out = new PrintWriter(dir + ai.getGenerationError().size() + ".csv");
-            out.print("Mean Winrate: ");
+            out.print("Mean Winrate, ");
             out.println(toCSV(win));
-            out.print("Mean Error network 0: ");
+            out.print("Mean Error network 0, ");
             out.println(toCSV(error));
-            out.print("Mean Error network 1: ");
+            out.print("Mean Error network 1, ");
             out.println(toCSV((error1)));
-            out.print("Mean Error network 2: ");
+            out.print("Mean Error network 2, ");
             out.println(toCSV((error2)));
-            out.print("Mean Error network 3: ");
+            out.print("Mean Error network 3, ");
             out.println(toCSV((error3)));
             out.print("Mean Points: ");
             out.println(toCSV(points));
