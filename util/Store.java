@@ -181,7 +181,7 @@ public class Store {
             out.println(toCSV((error2)));
             out.print("Mean Error network 3, ");
             out.println(toCSV((error3)));
-            out.print("Mean Points: ");
+            out.print("Mean Points, ");
             out.println(toCSV(points));
 
             out.close();
