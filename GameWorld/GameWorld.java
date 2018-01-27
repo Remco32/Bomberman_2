@@ -149,19 +149,11 @@ public class GameWorld {
                 AIHandler temp = i.next();
                 if (!temp.getMan().getAlive()) {
                     temp.EndOfRound(-1);
-                    /*
-                    if(temp.toString().contains("Hierarchical")) {
-                        ((HierarchicalAI)temp).getOneEnemyNetwork().EndOfRound(-1);
-                        ((HierarchicalAI)temp).getTwoEnemiesNetwork().EndOfRound(-1);
-                        ((HierarchicalAI)temp).getThreeEnemiesNetwork().EndOfRound(-1);
-
-                    }*/
                     i.remove();
-
                 }
             }
 
-            if(amountOfRounds>150)Randombomb(( (amountOfRounds-150)/(double)(50*amountOfRounds)));
+            if (amountOfRounds > 150) Randombomb(((amountOfRounds - 150) / (double) (50 * amountOfRounds)));
 
             amountOfRounds++;
             if (windowBool && !(window == null)) try {

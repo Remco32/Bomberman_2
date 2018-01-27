@@ -33,12 +33,13 @@ public class Main {
     static int ROUND_TIME = 1; //Time for a single gamestep in ms.
     static double EXPLORATION_RATE = 0.3;
     static double LEARNING_RATE = 0.0001;
+
     /** SAVING **/
-    static boolean SAVE_EVERY_GENERATION = true;
-    static boolean STOREDATA = true;
+    static boolean SAVE_EVERY_GENERATION = false;
+    static boolean STOREDATA = false;
     /** LOADING **/
-    static boolean LOAD_HIERARHCIAL = false;
     static boolean SELECT_NETWORK_TO_LOAD = false; //also needs to be enabled to load hierarchical
+    static boolean LOAD_HIERARHCIAL = false;
 
     /** DEBUG **/
     static boolean FIND_MINIMUM_ROUND_TIME = false; //decreases the roundtime by 1 ms every generation. Should eventually crash the program.
@@ -407,9 +408,9 @@ public class Main {
             //System.out.println("Created neural net for player " + idx);
             if (setting.isLOADWEIGHTS() && !LOAD_HIERARHCIAL) {
             nn.getActivationVectorlist().setWeigths(new Load().Load());
-            nn.setLearningRate(0);
-
+            //nn.setLearningRate(0);
             }
+
             if (setting.isLOADWEIGHTS() && LOAD_HIERARHCIAL) {
                 System.out.println("Select each hiearchical network in order.");
 

@@ -105,7 +105,7 @@ public class ErrorDrivenBoltzmanNNFullInput extends AIHandler {
                 while ((isPlayer == 0) && idx < pos.getBombermanList().size()) {
                     BomberMan bombman = pos.getBombermanList().get(idx);
                     if (bombman == man) {
-                        isPlayer = 1; // is enemy
+                        isPlayer = 1; // is player
                     }
                     idx++;
                 }
