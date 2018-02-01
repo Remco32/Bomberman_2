@@ -58,6 +58,7 @@ public class Main {
         NNSettings nn1 = new NNSettings();
         nn1.setWeigths(new int[]{100, 6});
         nn1.setFunctions(new int[]{MLP.SIGMOID, MLP.LINEAR});
+        //nn1.setTypeNetwork(NNSettings.HIERARCHICAL_ERROR_DRIVEN);
         nn1.setTypeNetwork(NNSettings.HIERARCHICAL_EPSILON_GREEDY);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(EXPLORATION_RATE);
@@ -217,10 +218,17 @@ public class Main {
 
                 //updates all the testvalues from currentEpoch level to generation level
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).newGeneration();
-                if(ai.toString().contains("Hierarchical")) {
+                if(ai.toString().contains("HierarchicalAIErrorDriven")) {
+
                     for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIErrorDriven) ai.get(0)).getOneEnemyNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
+                }
+                //filthy hack
+                if(ai.toString().contains("HierarchicalAIEpsilonGreedy")){
+                    for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIEpsilonGreedy) ai.get(0)).getOneEnemyNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIEpsilonGreedy) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIEpsilonGreedy) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
                 }
 
                 //double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
@@ -248,10 +256,15 @@ public class Main {
                         accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                         accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                         accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
-                        if(ai.toString().contains("Hierarchical")) {
+                        if(ai.toString().contains("HierarchicalAIErrorDriven")) {
                             accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
                             accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
                             accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
+                        }
+                        if(ai.toString().contains("HierarchicalAIEpsilonGreedy")) {
+                            accumulateError1.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
+                            accumulateError2.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
+                            accumulateError3.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
                         }
                     }
 
@@ -288,10 +301,15 @@ public class Main {
                 accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                 accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                 accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
-                if(ai.toString().contains("Hierarchical")) {
+                if(ai.toString().contains("HierarchicalAIErrorDriven")) {
                     accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
                     accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
                     accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
+                }
+                if(ai.toString().contains("HierarchicalAIEpsilonGreedy")) {
+                    accumulateError1.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
+                    accumulateError2.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
+                    accumulateError3.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
                 }
             }
             new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well

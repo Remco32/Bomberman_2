@@ -21,7 +21,7 @@ public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput 
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
 
-    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
+    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
