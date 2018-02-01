@@ -30,7 +30,7 @@ public class Main {
     static int AMOUNT_OF_EPOCHS = 10000;
     static int AMOUNT_OF_TESTS = 100;
     static int AMOUNT_OF_GENERATIONS = 100;
-    static int ROUND_TIME = 1; //Time for a single gamestep in ms.
+    static int ROUND_TIME = 200; //Time for a single gamestep in ms.
     static double EXPLORATION_RATE = 0.3;
     static double LEARNING_RATE = 0.0001;
 
@@ -216,9 +216,9 @@ public class Main {
                 //updates all the testvalues from currentEpoch level to generation level
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).newGeneration();
                 if(ai.toString().contains("Hierarchical")) {
-                    for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAI) ai.get(0)).getOneEnemyNetwork().newGeneration();
-                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAI) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
-                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAI) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIErrorDriven) ai.get(0)).getOneEnemyNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
                 }
 
                 //double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
@@ -247,9 +247,9 @@ public class Main {
                         accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                         accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
                         if(ai.toString().contains("Hierarchical")) {
-                            accumulateError1.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork1().get(x));
-                            accumulateError2.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork2().get(x));
-                            accumulateError3.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork3().get(x));
+                            accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
+                            accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
+                            accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
                         }
                     }
 
@@ -287,9 +287,9 @@ public class Main {
                 accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                 accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
                 if(ai.toString().contains("Hierarchical")) {
-                    accumulateError1.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork1().get(x));
-                    accumulateError2.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork2().get(x));
-                    accumulateError3.get(accumulate).add( ((HierarchicalAI)temp).getGenerationErrorNetwork3().get(x));
+                    accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
+                    accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
+                    accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
                 }
             }
             new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well
@@ -382,10 +382,10 @@ public class Main {
             if (setting.getTypeNetwork() == setting.GREEDY)
                 nn = new Greedy(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.HIERARCHICAL)
-                nn = new HierarchicalAI(world, idx, setting, gSet);
+                nn = new HierarchicalAIErrorDriven(world, idx, setting, gSet);
                 /**
                 AIHandler nn2 = new AIHandler(world, idx);
-                nn2 = new HierarchicalAI(world, idx, setting, gSet);
+                nn2 = new HierarchicalAIErrorDriven(world, idx, setting, gSet);
                 nn2.setDiscount(setting.getDiscount());
                 nn2.setLearningRate(setting.getLearningRate());
                 nn2.setExplorationChance(setting.getExplorationRate());
@@ -414,10 +414,10 @@ public class Main {
             if (setting.isLOADWEIGHTS() && LOAD_HIERARHCIAL) {
                 System.out.println("Select each hiearchical network in order.");
 
-                ((HierarchicalAI)nn).pathFindingNetwork.setActivationList(new Load().loadHierarchical());
-                ((HierarchicalAI)nn).oneEnemyNetwork.setActivationList(new Load().loadHierarchical());
-                ((HierarchicalAI)nn).twoEnemiesNetwork.setActivationList(new Load().loadHierarchical());
-                ((HierarchicalAI)nn).threeEnemiesNetwork.setActivationList(new Load().loadHierarchical());
+                ((HierarchicalAIErrorDriven)nn).pathFindingNetwork.setActivationList(new Load().loadHierarchical());
+                ((HierarchicalAIErrorDriven)nn).oneEnemyNetwork.setActivationList(new Load().loadHierarchical());
+                ((HierarchicalAIErrorDriven)nn).twoEnemiesNetwork.setActivationList(new Load().loadHierarchical());
+                ((HierarchicalAIErrorDriven)nn).threeEnemiesNetwork.setActivationList(new Load().loadHierarchical());
             }
 
         }

@@ -18,7 +18,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
+public class HierarchicalAIErrorDriven extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
@@ -27,7 +27,7 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
     private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
-    //protected MLP mlp2;
+
     public ErrorDrivenBoltzmanNNFullInput pathFindingNetwork;
     public ErrorDrivenBoltzmanNNFullInput oneEnemyNetwork;
     public ErrorDrivenBoltzmanNNFullInput twoEnemiesNetwork;
@@ -50,7 +50,7 @@ public class HierarchicalAI extends ErrorDrivenBoltzmanNNFullInput implements Se
 
 
 
-    public HierarchicalAI(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
+    public HierarchicalAIErrorDriven(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
 
 
         super(world, manIndex, setting, gSet);

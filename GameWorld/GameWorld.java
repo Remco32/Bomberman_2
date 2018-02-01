@@ -1,7 +1,6 @@
 package GameWorld;
 
 import AI.AIHandler;
-import AI.HierarchicalAI;
 import Graphics.GameWindow;
 
 import java.util.ArrayList;
@@ -178,9 +177,9 @@ public class GameWorld {
             AIHandler temp = i.next();
             temp.EndOfRound(1);/*
             if(temp.toString().contains("Hierarchical")) {
-                ((HierarchicalAI)temp).getOneEnemyNetwork().EndOfRound(1);
-                ((HierarchicalAI)temp).getTwoEnemiesNetwork().EndOfRound(1);
-                ((HierarchicalAI)temp).getThreeEnemiesNetwork().EndOfRound(1);
+                ((HierarchicalAIErrorDriven)temp).getOneEnemyNetwork().EndOfRound(1);
+                ((HierarchicalAIErrorDriven)temp).getTwoEnemiesNetwork().EndOfRound(1);
+                ((HierarchicalAIErrorDriven)temp).getThreeEnemiesNetwork().EndOfRound(1);
             }*/
         }
     }

@@ -2,8 +2,7 @@ package util;
 
 import AI.AIHandler;
 import AI.ErrorDrivenBoltzmanNNFullInput;
-import AI.HierarchicalAI;
-import AI.TimeDrivenBoltzmanNNFullInput;
+import AI.HierarchicalAIErrorDriven;
 import MLP.ActivationVectorList;
 
 import javax.imageio.ImageIO;
@@ -11,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,13 +48,13 @@ public class Store {
             //in case of having to save multiple networks
             if (ai.toString().contains("Hierarchical")) {
                 /**
-                 ArrayList list = ((HierarchicalAI)ai).getAllNetworks();
+                 ArrayList list = ((HierarchicalAIErrorDriven)ai).getAllNetworks();
 
                  for(int i = 0; i < list.size(); i++ ){
                  s.writeObject(i);
                  }
                  **/
-                ArrayList<ErrorDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAI) ai).getAllNetworks();
+                ArrayList<ErrorDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAIErrorDriven) ai).getAllNetworks();
                 for (int i = 0; i < 4; i++) {
                     try {
                         FileOutputStream fo = new FileOutputStream(new File(dir + "gen" + ai.getGenerationError().size() + "_NeuralNetwork" + i + ".nn"));
@@ -274,21 +272,21 @@ public class Store {
 
             if(ai.toString().contains("Hierarchical")) {
                 //out.print("Starting temperature: ");
-                //out.println(((HierarchicalAI)ai).TIME);
+                //out.println(((HierarchicalAIErrorDriven)ai).TIME);
 
                 /*
                 out.print("Rewards pathfinding strategy (death, kill, wall, move): ");
-                out.println(((HierarchicalAI)ai).DEATH_REWARD_PATHFINDING + "," + ((HierarchicalAI)ai).KILL_REWARD_PATHFINDING + "," + ((HierarchicalAI)ai).WALL_REWARD_PATHFINDING + "," + ((HierarchicalAI)ai).MOVE_REWARD_PATHFINDING );
+                out.println(((HierarchicalAIErrorDriven)ai).DEATH_REWARD_PATHFINDING + "," + ((HierarchicalAIErrorDriven)ai).KILL_REWARD_PATHFINDING + "," + ((HierarchicalAIErrorDriven)ai).WALL_REWARD_PATHFINDING + "," + ((HierarchicalAIErrorDriven)ai).MOVE_REWARD_PATHFINDING );
 
                 out.print("Rewards attacking strategy (death, kill, wall, move): ");
-                out.println(((HierarchicalAI)ai).DEATH_REWARD_ATTACKING + "," + ((HierarchicalAI)ai).KILL_REWARD_ATTACKING + "," + ((HierarchicalAI)ai).WALL_REWARD_ATTACKING + "," + ((HierarchicalAI)ai).MOVE_REWARD_ATTACKING );
+                out.println(((HierarchicalAIErrorDriven)ai).DEATH_REWARD_ATTACKING + "," + ((HierarchicalAIErrorDriven)ai).KILL_REWARD_ATTACKING + "," + ((HierarchicalAIErrorDriven)ai).WALL_REWARD_ATTACKING + "," + ((HierarchicalAIErrorDriven)ai).MOVE_REWARD_ATTACKING );
                  */
 
                 out.print("Rewards pathfinding strategy (kill, wall): ");
-                out.println(((HierarchicalAI)ai).KILL_REWARD_PATHFINDING + "," + ((HierarchicalAI)ai).WALL_REWARD_PATHFINDING);
+                out.println(((HierarchicalAIErrorDriven)ai).KILL_REWARD_PATHFINDING + "," + ((HierarchicalAIErrorDriven)ai).WALL_REWARD_PATHFINDING);
 
                 out.print("Rewards attacking strategy (kill, wall,): ");
-                out.println(((HierarchicalAI)ai).KILL_REWARD_ATTACKING + "," + ((HierarchicalAI)ai).WALL_REWARD_ATTACKING );
+                out.println(((HierarchicalAIErrorDriven)ai).KILL_REWARD_ATTACKING + "," + ((HierarchicalAIErrorDriven)ai).WALL_REWARD_ATTACKING );
             }
 
             out.print("Discount rate: ");
