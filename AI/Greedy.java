@@ -140,6 +140,8 @@ public class Greedy extends AIHandler {
                 maxOutcome = output[idx];
             }
         }
+
+
         moves.add(move);// add the move to the move list
 
 

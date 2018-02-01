@@ -283,10 +283,10 @@ public class Store {
                  */
 
                 out.print("Rewards pathfinding strategy (kill, wall): ");
-                out.println(((HierarchicalAIErrorDriven)ai).KILL_REWARD_PATHFINDING + "," + ((HierarchicalAIErrorDriven)ai).WALL_REWARD_PATHFINDING);
+                out.println(ai.getWorld().KILL_REWARD_PATHFINDING + "," + ai.getWorld().WALL_REWARD_PATHFINDING);
 
                 out.print("Rewards attacking strategy (kill, wall,): ");
-                out.println(((HierarchicalAIErrorDriven)ai).KILL_REWARD_ATTACKING + "," + ((HierarchicalAIErrorDriven)ai).WALL_REWARD_ATTACKING );
+                out.println((ai.getWorld().KILL_REWARD_ATTACKING + "," + ai.getWorld().WALL_REWARD_ATTACKING ));
             }
 
             out.print("Discount rate: ");

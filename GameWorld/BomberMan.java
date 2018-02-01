@@ -13,13 +13,24 @@ public class BomberMan {
     private ArrayList<Integer> pointBuffer = new ArrayList<>();
     private Boolean alive;
     private GameWorld world;
-    static int MOVECOST = -1;
+
     int bombCooldown = 0;
     static int MAXBOMBCOOLDOWN = 5;
 
     //private int deathCost = -300; //still to be implemented
     private int killReward = 100;
     private int wallReward = 30;
+    static int MOVECOST = -1;
+
+    public int DEATH_REWARD_PATHFINDING = -300;
+    public int KILL_REWARD_PATHFINDING = 0;
+    public int WALL_REWARD_PATHFINDING = 30;
+    public int MOVE_REWARD_PATHFINDING = -1;
+
+    public int DEATH_REWARD_ATTACKING = -300;
+    public int KILL_REWARD_ATTACKING = 100;
+    public int WALL_REWARD_ATTACKING = 0;
+    public int MOVE_REWARD_ATTACKING = -1;
 
 
     BomberMan(int x, int y, int id, GameWorld world) {

@@ -15,6 +15,7 @@ public class Bomb {
     private BomberMan placedBy;
     private Boolean exploded;
     private GameWorld world;
+
     static int DIECOST = -300;
     static int KillReward = 100;
     static int wallReward = 30;

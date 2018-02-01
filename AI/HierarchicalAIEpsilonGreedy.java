@@ -10,15 +10,13 @@ import util.NNSettings;
 import java.io.Serializable;
 import java.util.*;
 
-import static GameWorld.GameWorld.*;
 import static org.apache.commons.math3.util.FastMath.abs;
-
 
 /**
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAIErrorDriven extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
+public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
@@ -50,7 +48,7 @@ public class HierarchicalAIErrorDriven extends ErrorDrivenBoltzmanNNFullInput im
 
 
 
-    public HierarchicalAIErrorDriven(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
+    public HierarchicalAIEpsilonGreedy(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
 
 
         super(world, manIndex, setting, gSet);
@@ -128,18 +126,12 @@ public class HierarchicalAIErrorDriven extends ErrorDrivenBoltzmanNNFullInput im
                 maxOutcome = output[idx];
             }
         }
-        double value = new Random().nextDouble() % 1;
-        double relativeError;
-        if (getGenerationError().size() <= 2) relativeError =explorationChance;
-        else {
-            double error1= getGenerationError().get(getGenerationError().size() - 1);
-            double error2 = getGenerationError().get(getGenerationError().size() - 2);
-            if(error1>error2) relativeError = error2/error1;
-            else{relativeError = error1/error2;}
-            relativeError = Math.min(explorationChance,1-relativeError);
-        }
 
-        if ( relativeError> value && !testing) {
+        /* Exploration strategy */
+        double randomValue = new Random().nextDouble() % 1;
+
+        if (randomValue > explorationChance && !testing) {
+
             move = new Random().nextInt(6);
             if (PRINT) System.out.println("random!");
         }

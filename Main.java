@@ -30,9 +30,12 @@ public class Main {
     static int AMOUNT_OF_EPOCHS = 10000;
     static int AMOUNT_OF_TESTS = 100;
     static int AMOUNT_OF_GENERATIONS = 100;
-    static int ROUND_TIME = 200; //Time for a single gamestep in ms.
+    static int ROUND_TIME = 1; //Time for a single gamestep in ms.
     static double EXPLORATION_RATE = 0.3;
     static double LEARNING_RATE = 0.0001;
+
+    //For rewards, check GameWorld
+
 
     /** SAVING **/
     static boolean SAVE_EVERY_GENERATION = false;
@@ -55,8 +58,7 @@ public class Main {
         NNSettings nn1 = new NNSettings();
         nn1.setWeigths(new int[]{100, 6});
         nn1.setFunctions(new int[]{MLP.SIGMOID, MLP.LINEAR});
-        nn1.setTypeNetwork(NNSettings.HIERARCHICAL);
-        //nn1.setTypeNetwork(NNSettings.NEURAL_NETWORK_ERROR_BOLTZMAN);
+        nn1.setTypeNetwork(NNSettings.HIERARCHICAL_EPSILON_GREEDY);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(EXPLORATION_RATE);
         nn1.setLOADWEIGHTS(SELECT_NETWORK_TO_LOAD);
@@ -381,22 +383,25 @@ public class Main {
                 nn = new RandomWalk(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.GREEDY)
                 nn = new Greedy(world, idx, setting, gSet);
-            if (setting.getTypeNetwork() == setting.HIERARCHICAL)
+            if (setting.getTypeNetwork() == setting.HIERARCHICAL_ERROR_DRIVEN)
                 nn = new HierarchicalAIErrorDriven(world, idx, setting, gSet);
-                /**
-                AIHandler nn2 = new AIHandler(world, idx);
-                nn2 = new HierarchicalAIErrorDriven(world, idx, setting, gSet);
-                nn2.setDiscount(setting.getDiscount());
-                nn2.setLearningRate(setting.getLearningRate());
-                nn2.setExplorationChance(setting.getExplorationRate());
-                nn2.setGenerationSize(gSet.getAmountOfGenerations());
-                nn2.setEpochSize(gSet.getAmountOfEpochs());
-                System.out.println("Created 2nd neural net for player " + idx);
-                if (setting.isLOADWEIGHTS()) {
-                    nn2.getActivationVectorlist().setWeigths(new Load().Load());
-                    nn2.setLearningRate(0);
-                }
-                 **/
+            if (setting.getTypeNetwork() == setting.HIERARCHICAL_EPSILON_GREEDY)
+                nn = new HierarchicalAIEpsilonGreedy(world, idx, setting, gSet);
+
+            /**
+            AIHandler nn2 = new AIHandler(world, idx);
+            nn2 = new HierarchicalAIErrorDriven(world, idx, setting, gSet);
+            nn2.setDiscount(setting.getDiscount());
+            nn2.setLearningRate(setting.getLearningRate());
+            nn2.setExplorationChance(setting.getExplorationRate());
+            nn2.setGenerationSize(gSet.getAmountOfGenerations());
+            nn2.setEpochSize(gSet.getAmountOfEpochs());
+            System.out.println("Created 2nd neural net for player " + idx);
+            if (setting.isLOADWEIGHTS()) {
+                nn2.getActivationVectorlist().setWeigths(new Load().Load());
+                nn2.setLearningRate(0);
+            }
+             **/
 
 
 

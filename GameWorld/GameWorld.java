@@ -26,6 +26,16 @@ public class GameWorld {
     protected ArrayList<Bomb> explodedBombList;
     private int win = 0;
 
+    public int DEATH_REWARD_PATHFINDING = -300;
+    public int KILL_REWARD_PATHFINDING = 0;
+    public int WALL_REWARD_PATHFINDING = 30;
+    public int MOVE_REWARD_PATHFINDING = -1;
+
+    public int DEATH_REWARD_ATTACKING = -300;
+    public int KILL_REWARD_ATTACKING = 100;
+    public int WALL_REWARD_ATTACKING = 0;
+    public int MOVE_REWARD_ATTACKING = -1;
+
     private int roundTime;
 
     public GameWorld(int gridSize, int amountOfPlayers, Boolean windowBool) {

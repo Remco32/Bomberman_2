@@ -15,6 +15,7 @@ public class NNSettings {
     private boolean LOADWEIGHTS = false;
     private boolean STOREDATA = false;
 
+
     public void setSTOREDATA(boolean STOREDATA) {
         this.STOREDATA = STOREDATA;
     }
@@ -34,7 +35,8 @@ public class NNSettings {
     public static final int TDERROR = 7;
     public static final int RANDOM_WALK = 8;
     public static final int GREEDY = 9;
-    public static final int HIERARCHICAL = 10;
+    public static final int HIERARCHICAL_ERROR_DRIVEN = 10;
+    public static final int HIERARCHICAL_EPSILON_GREEDY = 11;
 
     public int[] getWeigths() {
         return weigths;
