@@ -16,12 +16,12 @@ import static org.apache.commons.math3.util.FastMath.abs;
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
+public class HierarchicalAIGreedy extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
 
-    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
+    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
@@ -48,7 +48,7 @@ public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput 
 
 
 
-    public HierarchicalAIEpsilonGreedy(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
+    public HierarchicalAIGreedy(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
 
 
         super(world, manIndex, setting, gSet);
@@ -128,13 +128,7 @@ public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput 
         }
 
         /* Exploration strategy */
-        double randomValue = new Random().nextDouble() % 1;
-
-        if (randomValue > explorationChance && !testing) {
-
-            move = new Random().nextInt(6);
-            if (PRINT) System.out.println("random!");
-        }
+        /* none: greedy */
         if (PRINT) System.out.println("move:" + move);
         return move;
     }

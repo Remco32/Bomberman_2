@@ -29,7 +29,7 @@ public class Main {
     /** Parameters **/
     static int AMOUNT_OF_EPOCHS = 10000;
     static int AMOUNT_OF_TESTS = 100;
-    static int AMOUNT_OF_GENERATIONS = 100;
+    static int AMOUNT_OF_GENERATIONS = 101;
     static int ROUND_TIME = 1; //Time for a single gamestep in ms.
     static double EXPLORATION_RATE = 0.3;
     static double LEARNING_RATE = 0.0001;
@@ -38,8 +38,8 @@ public class Main {
 
 
     /** SAVING **/
-    static boolean SAVE_EVERY_GENERATION = false;
-    static boolean STOREDATA = false;
+    static boolean SAVE_EVERY_GENERATION = true;
+    static boolean STOREDATA = true;
     /** LOADING **/
     static boolean SELECT_NETWORK_TO_LOAD = false; //also needs to be enabled to load hierarchical
     static boolean LOAD_HIERARHCIAL = false;
@@ -59,7 +59,8 @@ public class Main {
         nn1.setWeigths(new int[]{100, 6});
         nn1.setFunctions(new int[]{MLP.SIGMOID, MLP.LINEAR});
         //nn1.setTypeNetwork(NNSettings.HIERARCHICAL_ERROR_DRIVEN);
-        nn1.setTypeNetwork(NNSettings.HIERARCHICAL_EPSILON_GREEDY);
+        //nn1.setTypeNetwork(NNSettings.HIERARCHICAL_EPSILON_GREEDY);
+        nn1.setTypeNetwork(NNSettings.HIERARCHICAL_GREEDY);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(EXPLORATION_RATE);
         nn1.setLOADWEIGHTS(SELECT_NETWORK_TO_LOAD);
@@ -218,17 +219,22 @@ public class Main {
 
                 //updates all the testvalues from currentEpoch level to generation level
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).newGeneration();
-                if(ai.toString().contains("HierarchicalAIErrorDriven")) {
+                if(ai.toString().equals("HierarchicalAIErrorDriven")) {
 
                     for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIErrorDriven) ai.get(0)).getOneEnemyNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
                 }
                 //filthy hack
-                if(ai.toString().contains("HierarchicalAIEpsilonGreedy")){
+                if(ai.toString().equals("HierarchicalAIEpsilonGreedy")){
                     for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIEpsilonGreedy) ai.get(0)).getOneEnemyNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIEpsilonGreedy) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIEpsilonGreedy) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
+                }
+                if(ai.toString().equals("HierarchicalAIGreedy")){
+                    for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIGreedy) ai.get(0)).getOneEnemyNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIGreedy) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIGreedy) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
                 }
 
                 //double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
@@ -256,15 +262,20 @@ public class Main {
                         accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                         accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                         accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
-                        if(ai.toString().contains("HierarchicalAIErrorDriven")) {
+                        if(ai.toString().equals("HierarchicalAIErrorDriven")) {
                             accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
                             accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
                             accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
                         }
-                        if(ai.toString().contains("HierarchicalAIEpsilonGreedy")) {
+                        if(ai.toString().equals("HierarchicalAIEpsilonGreedy")) {
                             accumulateError1.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
                             accumulateError2.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
                             accumulateError3.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
+                        }
+                        if(ai.toString().equals("HierarchicalAIGreedy")) {
+                            accumulateError1.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork1().get(x));
+                            accumulateError2.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork2().get(x));
+                            accumulateError3.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork3().get(x));
                         }
                     }
 
@@ -301,16 +312,22 @@ public class Main {
                 accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                 accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                 accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
-                if(ai.toString().contains("HierarchicalAIErrorDriven")) {
+                if(ai.toString().equals("HierarchicalAIErrorDriven")) {
                     accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
                     accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
                     accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
                 }
-                if(ai.toString().contains("HierarchicalAIEpsilonGreedy")) {
+                if(ai.toString().equals("HierarchicalAIEpsilonGreedy")) {
                     accumulateError1.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
                     accumulateError2.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
                     accumulateError3.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
                 }
+                if(ai.toString().equals("HierarchicalAIGreedy")) {
+                    accumulateError1.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork1().get(x));
+                    accumulateError2.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork2().get(x));
+                    accumulateError3.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork3().get(x));
+                }
+
             }
             new Store(accumulateWinrate.get(accumulate), accumulatePoints.get(accumulate), accumulateError.get(accumulate), ai.get(0), accumulate); //saves to CSV as well
         }
@@ -405,6 +422,8 @@ public class Main {
                 nn = new HierarchicalAIErrorDriven(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.HIERARCHICAL_EPSILON_GREEDY)
                 nn = new HierarchicalAIEpsilonGreedy(world, idx, setting, gSet);
+            if (setting.getTypeNetwork() == setting.HIERARCHICAL_GREEDY)
+                nn = new HierarchicalAIGreedy(world, idx, setting, gSet);
 
             /**
             AIHandler nn2 = new AIHandler(world, idx);

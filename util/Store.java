@@ -1,8 +1,6 @@
 package util;
 
-import AI.AIHandler;
-import AI.ErrorDrivenBoltzmanNNFullInput;
-import AI.HierarchicalAIErrorDriven;
+import AI.*;
 import MLP.ActivationVectorList;
 
 import javax.imageio.ImageIO;
@@ -54,7 +52,19 @@ public class Store {
                  s.writeObject(i);
                  }
                  **/
-                ArrayList<ErrorDrivenBoltzmanNNFullInput> neuralNetList = ((HierarchicalAIErrorDriven) ai).getAllNetworks();
+                ArrayList<ErrorDrivenBoltzmanNNFullInput> neuralNetList = null;
+                if (ai.toString().equals("HierarchicalAIErrorDriven")){
+                    neuralNetList = ((HierarchicalAIErrorDriven) ai).getAllNetworks();
+                }
+
+                if (ai.toString().equals("HierarchicalAIEpsilonGreedy")){
+                    neuralNetList = ((HierarchicalAIEpsilonGreedy) ai).getAllNetworks();
+                }
+                if (ai.toString().equals("HierarchicalAIGreedy")){
+                    neuralNetList = ((HierarchicalAIGreedy) ai).getAllNetworks();
+                }
+
+
                 for (int i = 0; i < 4; i++) {
                     try {
                         FileOutputStream fo = new FileOutputStream(new File(dir + "gen" + ai.getGenerationError().size() + "_NeuralNetwork" + i + ".nn"));
