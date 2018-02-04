@@ -219,19 +219,19 @@ public class Main {
 
                 //updates all the testvalues from currentEpoch level to generation level
                 for (int x = 0; x < NNSettingsList.size(); x++) ai.get(x).newGeneration();
-                if(ai.toString().equals("HierarchicalAIErrorDriven")) {
+                if(ai.toString().contains("HierarchicalAIErrorDriven")) {
 
                     for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIErrorDriven) ai.get(0)).getOneEnemyNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIErrorDriven) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
                 }
                 //filthy hack
-                if(ai.toString().equals("HierarchicalAIEpsilonGreedy")){
+                if(ai.toString().contains("HierarchicalAIEpsilonGreedy")){
                     for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIEpsilonGreedy) ai.get(0)).getOneEnemyNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIEpsilonGreedy) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIEpsilonGreedy) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
                 }
-                if(ai.toString().equals("HierarchicalAIGreedy")){
+                if(ai.toString().contains("HierarchicalAIGreedy")){
                     for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIGreedy) ai.get(0)).getOneEnemyNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIGreedy) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIGreedy) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
@@ -262,17 +262,17 @@ public class Main {
                         accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                         accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                         accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
-                        if(ai.toString().equals("HierarchicalAIErrorDriven")) {
+                        if(ai.toString().contains("HierarchicalAIErrorDriven")) {
                             accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
                             accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
                             accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
                         }
-                        if(ai.toString().equals("HierarchicalAIEpsilonGreedy")) {
+                        if(ai.toString().contains("HierarchicalAIEpsilonGreedy")) {
                             accumulateError1.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
                             accumulateError2.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
                             accumulateError3.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
                         }
-                        if(ai.toString().equals("HierarchicalAIGreedy")) {
+                        if(ai.toString().contains("HierarchicalAIGreedy")) {
                             accumulateError1.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork1().get(x));
                             accumulateError2.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork2().get(x));
                             accumulateError3.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork3().get(x));
@@ -312,17 +312,17 @@ public class Main {
                 accumulateWinrate.get(accumulate).add(temp.getWinrate().get(x));
                 accumulateError.get(accumulate).add(temp.getGenerationError().get(x));
                 accumulatePoints.get(accumulate).add(temp.getGenerationPoints().get(x));
-                if(ai.toString().equals("HierarchicalAIErrorDriven")) {
+                if(ai.toString().contains("HierarchicalAIErrorDriven")) {
                     accumulateError1.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork1().get(x));
                     accumulateError2.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork2().get(x));
                     accumulateError3.get(accumulate).add( ((HierarchicalAIErrorDriven)temp).getGenerationErrorNetwork3().get(x));
                 }
-                if(ai.toString().equals("HierarchicalAIEpsilonGreedy")) {
+                if(ai.toString().contains("HierarchicalAIEpsilonGreedy")) {
                     accumulateError1.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
                     accumulateError2.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
                     accumulateError3.get(accumulate).add( ((HierarchicalAIEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
                 }
-                if(ai.toString().equals("HierarchicalAIGreedy")) {
+                if(ai.toString().contains("HierarchicalAIGreedy")) {
                     accumulateError1.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork1().get(x));
                     accumulateError2.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork2().get(x));
                     accumulateError3.get(accumulate).add( ((HierarchicalAIGreedy)temp).getGenerationErrorNetwork3().get(x));

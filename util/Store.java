@@ -53,14 +53,16 @@ public class Store {
                  }
                  **/
                 ArrayList<ErrorDrivenBoltzmanNNFullInput> neuralNetList = null;
-                if (ai.toString().equals("HierarchicalAIErrorDriven")){
+
+                //System.out.println(ai.toString());
+                if (ai.toString().contains("HierarchicalAIErrorDriven")){
                     neuralNetList = ((HierarchicalAIErrorDriven) ai).getAllNetworks();
                 }
 
-                if (ai.toString().equals("HierarchicalAIEpsilonGreedy")){
+                if (ai.toString().contains("HierarchicalAIEpsilonGreedy")){
                     neuralNetList = ((HierarchicalAIEpsilonGreedy) ai).getAllNetworks();
                 }
-                if (ai.toString().equals("HierarchicalAIGreedy")){
+                if (ai.toString().contains("HierarchicalAIGreedy")){
                     neuralNetList = ((HierarchicalAIGreedy) ai).getAllNetworks();
                 }
 
