@@ -21,11 +21,12 @@ public class HierarchicalAIGreedy extends ErrorDrivenBoltzmanNNFullInput impleme
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
 
-    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
+    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
     private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
 
+    //Class of these networks are not important
     public ErrorDrivenBoltzmanNNFullInput pathFindingNetwork;
     public ErrorDrivenBoltzmanNNFullInput oneEnemyNetwork;
     public ErrorDrivenBoltzmanNNFullInput twoEnemiesNetwork;

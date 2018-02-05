@@ -283,8 +283,7 @@ public class Store {
             out.println(roundTime);
 
             if(ai.toString().contains("Hierarchical")) {
-                //out.print("Starting temperature: ");
-                //out.println(((HierarchicalAIErrorDriven)ai).TIME);
+
 
                 /*
                 out.print("Rewards pathfinding strategy (death, kill, wall, move): ");

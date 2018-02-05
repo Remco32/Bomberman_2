@@ -16,7 +16,7 @@ import static org.apache.commons.math3.util.FastMath.abs;
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
+public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
@@ -25,6 +25,9 @@ public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput 
     private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
+
+    int startingTemperature = 200;
+    int currentTemperature;
 
     //Class of these networks are not important
     public ErrorDrivenBoltzmanNNFullInput pathFindingNetwork;
@@ -49,7 +52,7 @@ public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput 
 
 
 
-    public HierarchicalAIEpsilonGreedy(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
+    public HierarchicalAIMaxBoltzman(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
 
 
         super(world, manIndex, setting, gSet);
@@ -73,6 +76,8 @@ public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput 
         String name = "Hoi";
         activationList = new ActivationVectorList(initWeights, activationFunctionArrayList, name);
 
+        //Set temperature
+        currentTemperature = startingTemperature;
     }
 
     public void AddMoveToBuffer() {
@@ -139,7 +144,111 @@ public class HierarchicalAIEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput 
         if (PRINT) System.out.println("move:" + move);
         return move;
     }
+/*
+    public int boltzmannOud(double[] Qvalues) {
+        int move = 0;
 
+        double[] Qclone = Qvalues.clone();
+        Arrays.sort(Qclone);
+        double maxQ = (Qclone[Qvalues.length - 1]); // makes it uniform
+
+        //calculate the sum
+        double Qsum = 0;
+        int gensize = getGenerationError().size();
+        double time = localTime * generationSize/(double) (gensize*gensize); //Math.pow(1.1,generationSize) / Math.pow(1.1,getGenerationError().size());
+
+        double logBeta = Math.max(0,Math.log(getGenerationError().size() * getEpochError().size()/Math.pow(2,error.size())));
+
+        double timeBeta = 1/(double)(generationSize - gensize + 1);
+        for (double val : Qvalues) {
+            Qsum += Math.exp((val-maxQ)*timeBeta);
+        }
+        //System.out.println("timeBeta" + timeBeta);
+        // System.out.println("logBeta" + logBeta);
+        // System.out.println("time" + time);
+
+        //transform Qvalues into probability array
+        double[] probabilitys = new double[Qvalues.length];
+        for (int idx = 0; idx < Qvalues.length; idx++) {
+            probabilitys[idx] = Math.exp((Qvalues[idx]-maxQ)*timeBeta) / Qsum;
+        }
+
+        //transform probabilitys into cumulative sum array;
+        double cumsum = 0;
+        double[] cumsumprobability = new double[Qvalues.length];
+        for (int idx = 0; idx < Qvalues.length; idx++) {
+            cumsum += probabilitys[idx] * 100;
+            cumsumprobability[idx] = cumsum;
+        }
+
+        //choose a move
+        double randomValue = rnd.nextDouble() * 100;
+
+        for (int idx = 0; idx < Qvalues.length; idx++) {
+            if (randomValue < cumsumprobability[idx]) return idx;
+        }
+        return move;
+
+    }
+    */
+
+    //Receives the Qvalues of the current state
+    //Returns a move according to the Boltzmann distribution
+    public int boltzmann(double[] qValues) {
+        int move = 0;
+        double[] probabilities = new double[5];
+        double numerator;
+
+        //Calculate denominator first
+        double denominator = 0;
+        for (int i = 0; i < 6; i++) { //6 possible actions
+            denominator += Math.exp(qValues[i] / currentTemperature);
+        }
+
+        for (int i = 0; i < 6; i++) { //6 possible actions
+            numerator = Math.exp(qValues[i] / currentTemperature);
+            //Calculate probabilities for all actions
+            probabilities[i] = numerator / denominator;
+        }
+
+        //cummulate the probabilities, so they can be used in a range when generating a value in [0,1]
+        double[] cummulatedProbabilities = new double[5];
+        cummulatedProbabilities[0] = probabilities[0]; //first case is outside of the loop
+        for (int i = 1; i < 6; i++) {
+            cummulatedProbabilities[i] = cummulatedProbabilities[i - 1] + probabilities[i];
+        }
+
+        //Generate a value between 0 and 1.
+        double randomValue = new Random().nextDouble() % 1;
+        double lowerBound = 0;
+        double upperBound;
+        for (int i = 0; i < 6; i++) {
+            if (i != 0) {
+                lowerBound = cummulatedProbabilities[i - 1];
+            }
+            upperBound = cummulatedProbabilities[i];
+
+            if (randomValue > lowerBound && randomValue <= upperBound) { //randomValue is in range of our probabilites
+                move = i;
+            }
+        }
+        return move;
+    }
+
+    /*
+        //Return the index containing the highest value of an array
+        public int maxIndexValueArray(double[] array) {
+            double maxValue = Double.NEGATIVE_INFINITY;
+            int index = 0;
+            for (int i = 0; i < array.length; i++) {
+                if (array[i] > maxValue) {
+                    maxValue = array[i];
+                    index = i;
+                }
+            }
+            return index;
+        }
+    */
     //doesn't change the values for already active bombs. Shouldn't be a problem. A kill caused during the pathfinding strategy is a mere accident. //TODO change rewards all active bombs
     //Changes the rewards to the other set
     void changeStrategyRewards(int strategyNumber){
