@@ -39,6 +39,8 @@ public class NNSettings {
     public static final int HIERARCHICAL_EPSILON_GREEDY = 11;
     public static final int HIERARCHICAL_GREEDY = 12;
     public static final int HIERARCHICAL_MAXBOLTZMANN = 13;
+    public static final int HIERARCHICAL_DIMINISHING_EPSILON_GREEDY = 14;
+
 
 
     public int[] getWeigths() {

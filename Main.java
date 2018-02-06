@@ -61,7 +61,8 @@ public class Main {
         //nn1.setTypeNetwork(NNSettings.HIERARCHICAL_ERROR_DRIVEN);
         //nn1.setTypeNetwork(NNSettings.HIERARCHICAL_EPSILON_GREEDY);
         //nn1.setTypeNetwork(NNSettings.HIERARCHICAL_GREEDY);
-        nn1.setTypeNetwork(NNSettings.HIERARCHICAL_MAXBOLTZMANN);
+        //nn1.setTypeNetwork(NNSettings.HIERARCHICAL_MAXBOLTZMANN);
+        nn1.setTypeNetwork(NNSettings.HIERARCHICAL_DIMINISHING_EPSILON_GREEDY);
         nnSettingsArrayList.add(nn1);
         nn1.setExplorationRate(EXPLORATION_RATE);
         nn1.setLOADWEIGHTS(SELECT_NETWORK_TO_LOAD);
@@ -242,6 +243,11 @@ public class Main {
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIMaxBoltzmann) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
                     for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIMaxBoltzmann) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
                 }
+                if(ai.toString().contains("HierarchicalAIDiminishingEpsilonGreedy")){
+                    for (int x = 0; x < NNSettingsList.size(); x++)  ((HierarchicalAIDiminishingEpsilonGreedy) ai.get(0)).getOneEnemyNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIDiminishingEpsilonGreedy) ai.get(0)).getTwoEnemiesNetwork().newGeneration();
+                    for (int x = 0; x < NNSettingsList.size(); x++) ((HierarchicalAIDiminishingEpsilonGreedy) ai.get(0)).getThreeEnemiesNetwork().newGeneration();
+                }
 
                 //double procentDone = ((accumulate + 1) / (double) gameSettings.getAcummulateTest()) * ((gen + 1) / (double) gameSettings.getAmountOfGenerations()) * 100;
                 //System.out.println("\rPercent done:" + procentDone);
@@ -287,6 +293,11 @@ public class Main {
                             accumulateError1.get(accumulate).add( ((HierarchicalAIMaxBoltzmann)temp).getGenerationErrorNetwork1().get(x));
                             accumulateError2.get(accumulate).add( ((HierarchicalAIMaxBoltzmann)temp).getGenerationErrorNetwork2().get(x));
                             accumulateError3.get(accumulate).add( ((HierarchicalAIMaxBoltzmann)temp).getGenerationErrorNetwork3().get(x));
+                        }
+                        if(ai.toString().contains("HierarchicalAIDiminishingEpsilonGreedy")) {
+                            accumulateError1.get(accumulate).add( ((HierarchicalAIDiminishingEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
+                            accumulateError2.get(accumulate).add( ((HierarchicalAIDiminishingEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
+                            accumulateError3.get(accumulate).add( ((HierarchicalAIDiminishingEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
                         }
                     }
 
@@ -342,6 +353,11 @@ public class Main {
                     accumulateError1.get(accumulate).add( ((HierarchicalAIMaxBoltzmann)temp).getGenerationErrorNetwork1().get(x));
                     accumulateError2.get(accumulate).add( ((HierarchicalAIMaxBoltzmann)temp).getGenerationErrorNetwork2().get(x));
                     accumulateError3.get(accumulate).add( ((HierarchicalAIMaxBoltzmann)temp).getGenerationErrorNetwork3().get(x));
+                }
+                if(ai.toString().contains("HierarchicalAIDiminishingEpsilonGreedy")) {
+                    accumulateError1.get(accumulate).add( ((HierarchicalAIDiminishingEpsilonGreedy)temp).getGenerationErrorNetwork1().get(x));
+                    accumulateError2.get(accumulate).add( ((HierarchicalAIDiminishingEpsilonGreedy)temp).getGenerationErrorNetwork2().get(x));
+                    accumulateError3.get(accumulate).add( ((HierarchicalAIDiminishingEpsilonGreedy)temp).getGenerationErrorNetwork3().get(x));
                 }
 
             }
@@ -442,6 +458,8 @@ public class Main {
                 nn = new HierarchicalAIGreedy(world, idx, setting, gSet);
             if (setting.getTypeNetwork() == setting.HIERARCHICAL_MAXBOLTZMANN)
                 nn = new HierarchicalAIMaxBoltzmann(world, idx, setting, gSet);
+            if (setting.getTypeNetwork() == setting.HIERARCHICAL_DIMINISHING_EPSILON_GREEDY)
+                nn = new HierarchicalAIDiminishingEpsilonGreedy(world, idx, setting, gSet);
 
             /**
             AIHandler nn2 = new AIHandler(world, idx);

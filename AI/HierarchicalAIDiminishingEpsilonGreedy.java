@@ -16,18 +16,15 @@ import static org.apache.commons.math3.util.FastMath.abs;
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAIMaxBoltzmann extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
+public class HierarchicalAIDiminishingEpsilonGreedy extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
 
-    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
+    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
-
-    double startingTemperature = 200;
-    double currentTemperature;
 
     //Class of these networks are not important
     public ErrorDrivenBoltzmanNNFullInput pathFindingNetwork;
@@ -52,7 +49,7 @@ public class HierarchicalAIMaxBoltzmann extends ErrorDrivenBoltzmanNNFullInput i
 
 
 
-    public HierarchicalAIMaxBoltzmann(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
+    public HierarchicalAIDiminishingEpsilonGreedy(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
 
 
         super(world, manIndex, setting, gSet);
@@ -76,8 +73,6 @@ public class HierarchicalAIMaxBoltzmann extends ErrorDrivenBoltzmanNNFullInput i
         String name = "Hoi";
         activationList = new ActivationVectorList(initWeights, activationFunctionArrayList, name);
 
-        //Set temperature
-        currentTemperature = startingTemperature;
     }
 
     public void AddMoveToBuffer() {
@@ -124,7 +119,6 @@ public class HierarchicalAIMaxBoltzmann extends ErrorDrivenBoltzmanNNFullInput i
         //Forwardpass
         network.activationList = mlp.forwardPass(CompleteGame(), activationList);
 
-        //Greedy option
         double[] output = network.CalculateBestMove().getOutput(); //get the outputlayer of the network
         double maxOutcome = Double.NEGATIVE_INFINITY;
         for (int idx = 0; idx < output.length; idx++) { //finds highest value
@@ -137,73 +131,17 @@ public class HierarchicalAIMaxBoltzmann extends ErrorDrivenBoltzmanNNFullInput i
         /* Exploration strategy */
         double randomValue = new Random().nextDouble() % 1;
 
-        if (randomValue < explorationChance && !testing) {
-            //Boltzmann distribution option
-            move = boltzmannMove(output);
+        double currExploration = explorationChance*(1-getGenerationError().size()/(double)( getGenerationSize()));
+        currExploration = Math.max(0.05,currExploration);
 
+        if (currExploration > randomValue && !testing) {
+            move = new Random().nextInt(6);
+            if (PRINT) System.out.println("random!");
         }
         if (PRINT) System.out.println("move:" + move);
         return move;
     }
 
-    //Receives the Qvalues of the current state
-    //Returns a move according to the Boltzmann distribution
-    public int boltzmannMove(double[] qValues) {
-        int move = 0;
-        double[] probabilities = new double[6];
-        double numerator;
-        int gensize = getGenerationError().size();
-        currentTemperature = startingTemperature - startingTemperature * (gensize/generationSize) + 1; //+1 to have a minimum
-
-        //Calculate denominator first
-        double denominator = 0;
-        for (int i = 0; i < 6; i++) { //6 possible actions
-            denominator += Math.exp(qValues[i] / currentTemperature);
-        }
-
-        for (int i = 0; i < 6; i++) { //6 possible actions
-            numerator = Math.exp(qValues[i] / currentTemperature);
-            //Calculate probabilities for all actions
-            probabilities[i] = numerator / denominator;
-        }
-
-        //accumulate the probabilities, so they can be used in a range when generating a value in [0,1]
-        double[] accumulatedProbabilities = new double[6];
-        accumulatedProbabilities[0] = probabilities[0]; //first case is outside of the loop
-        for (int i = 1; i < 6; i++) {
-            accumulatedProbabilities[i] = accumulatedProbabilities[i - 1] + probabilities[i];
-        }
-
-        //Generate a value between 0 and 1.
-        double randomValue = new Random().nextDouble() % 1;
-        double lowerBound = 0;
-        double upperBound;
-        for (int i = 0; i < 6; i++) {
-            if (i != 0) {
-                lowerBound = accumulatedProbabilities[i - 1];
-            }
-            upperBound = accumulatedProbabilities[i];
-            if (randomValue > lowerBound && randomValue <= upperBound) { //randomValue is in range of our probabilities
-                move = i;
-            }
-        }
-        return move;
-    }
-
-    /*
-        //Return the index containing the highest value of an array
-        public int maxIndexValueArray(double[] array) {
-            double maxValue = Double.NEGATIVE_INFINITY;
-            int index = 0;
-            for (int i = 0; i < array.length; i++) {
-                if (array[i] > maxValue) {
-                    maxValue = array[i];
-                    index = i;
-                }
-            }
-            return index;
-        }
-    */
     //doesn't change the values for already active bombs. Shouldn't be a problem. A kill caused during the pathfinding strategy is a mere accident. //TODO change rewards all active bombs
     //Changes the rewards to the other set
     void changeStrategyRewards(int strategyNumber){
