@@ -26,8 +26,8 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
 
     WorldPosition targetPosition;
 
-    int startingTemperature = 200;
-    int currentTemperature;
+    double startingTemperature = 200;
+    double currentTemperature;
 
     //Class of these networks are not important
     public ErrorDrivenBoltzmanNNFullInput pathFindingNetwork;
@@ -124,6 +124,7 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
         //Forwardpass
         network.activationList = mlp.forwardPass(CompleteGame(), activationList);
 
+        //Greedy option
         double[] output = network.CalculateBestMove().getOutput(); //get the outputlayer of the network
         double maxOutcome = Double.NEGATIVE_INFINITY;
         for (int idx = 0; idx < output.length; idx++) { //finds highest value
@@ -136,68 +137,23 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
         /* Exploration strategy */
         double randomValue = new Random().nextDouble() % 1;
 
-        if (randomValue > explorationChance && !testing) {
+        if (randomValue < explorationChance && !testing) {
+            //Boltzmann distribution option
+            move = boltzmannMove(output);
 
-            move = new Random().nextInt(6);
-            if (PRINT) System.out.println("random!");
         }
         if (PRINT) System.out.println("move:" + move);
         return move;
     }
-/*
-    public int boltzmannOud(double[] Qvalues) {
-        int move = 0;
-
-        double[] Qclone = Qvalues.clone();
-        Arrays.sort(Qclone);
-        double maxQ = (Qclone[Qvalues.length - 1]); // makes it uniform
-
-        //calculate the sum
-        double Qsum = 0;
-        int gensize = getGenerationError().size();
-        double time = localTime * generationSize/(double) (gensize*gensize); //Math.pow(1.1,generationSize) / Math.pow(1.1,getGenerationError().size());
-
-        double logBeta = Math.max(0,Math.log(getGenerationError().size() * getEpochError().size()/Math.pow(2,error.size())));
-
-        double timeBeta = 1/(double)(generationSize - gensize + 1);
-        for (double val : Qvalues) {
-            Qsum += Math.exp((val-maxQ)*timeBeta);
-        }
-        //System.out.println("timeBeta" + timeBeta);
-        // System.out.println("logBeta" + logBeta);
-        // System.out.println("time" + time);
-
-        //transform Qvalues into probability array
-        double[] probabilitys = new double[Qvalues.length];
-        for (int idx = 0; idx < Qvalues.length; idx++) {
-            probabilitys[idx] = Math.exp((Qvalues[idx]-maxQ)*timeBeta) / Qsum;
-        }
-
-        //transform probabilitys into cumulative sum array;
-        double cumsum = 0;
-        double[] cumsumprobability = new double[Qvalues.length];
-        for (int idx = 0; idx < Qvalues.length; idx++) {
-            cumsum += probabilitys[idx] * 100;
-            cumsumprobability[idx] = cumsum;
-        }
-
-        //choose a move
-        double randomValue = rnd.nextDouble() * 100;
-
-        for (int idx = 0; idx < Qvalues.length; idx++) {
-            if (randomValue < cumsumprobability[idx]) return idx;
-        }
-        return move;
-
-    }
-    */
 
     //Receives the Qvalues of the current state
     //Returns a move according to the Boltzmann distribution
-    public int boltzmann(double[] qValues) {
+    public int boltzmannMove(double[] qValues) {
         int move = 0;
         double[] probabilities = new double[5];
         double numerator;
+        int gensize = getGenerationError().size();
+        currentTemperature = startingTemperature - startingTemperature * (gensize/generationSize) + 1; //+1 to have a minimum
 
         //Calculate denominator first
         double denominator = 0;
@@ -211,11 +167,11 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
             probabilities[i] = numerator / denominator;
         }
 
-        //cummulate the probabilities, so they can be used in a range when generating a value in [0,1]
-        double[] cummulatedProbabilities = new double[5];
-        cummulatedProbabilities[0] = probabilities[0]; //first case is outside of the loop
+        //accumulate the probabilities, so they can be used in a range when generating a value in [0,1]
+        double[] accumulatedProbabilities = new double[5];
+        accumulatedProbabilities[0] = probabilities[0]; //first case is outside of the loop
         for (int i = 1; i < 6; i++) {
-            cummulatedProbabilities[i] = cummulatedProbabilities[i - 1] + probabilities[i];
+            accumulatedProbabilities[i] = accumulatedProbabilities[i - 1] + probabilities[i];
         }
 
         //Generate a value between 0 and 1.
@@ -224,11 +180,10 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
         double upperBound;
         for (int i = 0; i < 6; i++) {
             if (i != 0) {
-                lowerBound = cummulatedProbabilities[i - 1];
+                lowerBound = accumulatedProbabilities[i - 1];
             }
-            upperBound = cummulatedProbabilities[i];
-
-            if (randomValue > lowerBound && randomValue <= upperBound) { //randomValue is in range of our probabilites
+            upperBound = accumulatedProbabilities[i];
+            if (randomValue > lowerBound && randomValue <= upperBound) { //randomValue is in range of our probabilities
                 move = i;
             }
         }
