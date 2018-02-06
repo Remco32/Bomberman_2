@@ -16,12 +16,12 @@ import static org.apache.commons.math3.util.FastMath.abs;
  * Created by Remco on 21-10-2017.
  */
 
-public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
+public class HierarchicalAIMaxBoltzmann extends ErrorDrivenBoltzmanNNFullInput implements Serializable {
     private boolean DEBUG = false;
     private boolean DEBUG_PRINT_ENEMYCOUNT = false;
     private boolean DEBUG_PRINT_FOUND_PATH = false;
 
-    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = true;
+    private boolean SPECIALIZED_NETWORKS_FOR_AMOUNT_OF_ENEMIES = false;
     private boolean USE_SINGLE_NETWORK = false;
 
     WorldPosition targetPosition;
@@ -52,7 +52,7 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
 
 
 
-    public HierarchicalAIMaxBoltzman(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
+    public HierarchicalAIMaxBoltzmann(GameWorld world, int manIndex, NNSettings setting, GameSettings gSet) {
 
 
         super(world, manIndex, setting, gSet);
@@ -150,7 +150,7 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
     //Returns a move according to the Boltzmann distribution
     public int boltzmannMove(double[] qValues) {
         int move = 0;
-        double[] probabilities = new double[5];
+        double[] probabilities = new double[6];
         double numerator;
         int gensize = getGenerationError().size();
         currentTemperature = startingTemperature - startingTemperature * (gensize/generationSize) + 1; //+1 to have a minimum
@@ -168,7 +168,7 @@ public class HierarchicalAIMaxBoltzman extends ErrorDrivenBoltzmanNNFullInput im
         }
 
         //accumulate the probabilities, so they can be used in a range when generating a value in [0,1]
-        double[] accumulatedProbabilities = new double[5];
+        double[] accumulatedProbabilities = new double[6];
         accumulatedProbabilities[0] = probabilities[0]; //first case is outside of the loop
         for (int i = 1; i < 6; i++) {
             accumulatedProbabilities[i] = accumulatedProbabilities[i - 1] + probabilities[i];

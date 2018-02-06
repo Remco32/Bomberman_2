@@ -65,6 +65,9 @@ public class Store {
                 if (ai.toString().contains("HierarchicalAIGreedy")){
                     neuralNetList = ((HierarchicalAIGreedy) ai).getAllNetworks();
                 }
+                if (ai.toString().contains("HierarchicalAIMaxBoltzmann")){
+                    neuralNetList = ((HierarchicalAIMaxBoltzmann) ai).getAllNetworks();
+                }
 
 
                 for (int i = 0; i < 4; i++) {

@@ -38,6 +38,8 @@ public class NNSettings {
     public static final int HIERARCHICAL_ERROR_DRIVEN = 10;
     public static final int HIERARCHICAL_EPSILON_GREEDY = 11;
     public static final int HIERARCHICAL_GREEDY = 12;
+    public static final int HIERARCHICAL_MAXBOLTZMANN = 13;
+
 
     public int[] getWeigths() {
         return weigths;
